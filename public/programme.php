@@ -8,7 +8,7 @@ if (!isset($_GET['id'])) {
 
 $id = (int)$_GET['id'];
 
-// Fetch programme + level + leader
+/* Fetch Programme Details */
 $stmt = $pdo->prepare("
     SELECT p.*, l.LevelName,
            s.Name AS LeaderName, s.Email AS LeaderEmail, s.Photo AS LeaderPhoto
@@ -26,7 +26,7 @@ if (!$programme) {
     exit;
 }
 
-// Fetch modules with year from programmemodules + module leader
+/* Fetch Programme Modules */
 $mod_stmt = $pdo->prepare("
     SELECT m.ModuleID, m.ModuleName, m.Description, pm.Year,
            s.Name AS LeaderName, s.StaffID AS LeaderID
@@ -39,7 +39,7 @@ $mod_stmt = $pdo->prepare("
 $mod_stmt->execute([$id]);
 $allModules = $mod_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Group modules by year
+/* Group Modules by Year */
 $modulesByYear = [];
 foreach ($allModules as $m) {
     $year = $m['Year'] ?? 'Other';
@@ -47,7 +47,7 @@ foreach ($allModules as $m) {
 }
 ksort($modulesByYear);
 
-// Session flash message
+/* Check for Flash Messages */
 session_start();
 $successMsg = $_SESSION['flash_success'] ?? '';
 unset($_SESSION['flash_success']);
@@ -57,7 +57,7 @@ $activePage = 'home';
 $cssBase    = '../';
 $rootBase   = '../';
 
-// Initials helper
+/* Helper Function: Generate Initials */
 function initials($name) {
     $parts = explode(' ', $name);
     return strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));

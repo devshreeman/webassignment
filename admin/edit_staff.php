@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bio   = trim($_POST['Bio']);
     $pass  = trim($_POST['Password'] ?? '');
 
-    // Handle File Upload
+    /* Handle Photo Upload */
     $photoPath = $staffMember['Photo'] ?? '';
     if (isset($_FILES['Photo']) && $_FILES['Photo']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['Photo']['tmp_name'];
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->execute([$name, $email, $bio, $photoPath, $id]);
         }
         $msg = 'Staff member updated.';
-        // Refresh local data
+        /* Refresh data after update */
         $s->execute([$id]);
         $staffMember = $s->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -52,9 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Re-fetch staff member data to refresh the form variables is done on line 44.
-
-// Modules they lead
+/* Fetch Modules Led by This Staff Member */
 $led = $pdo->prepare("
     SELECT m.ModuleName, p.ProgrammeName
     FROM modules m

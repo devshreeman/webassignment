@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $pageTitle         = $pageTitle         ?? 'Admin Panel';
 $activeSidebarItem = $activeSidebarItem ?? '';
 
-// Access control
+/* Access Control: Require Admin Session */
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit;

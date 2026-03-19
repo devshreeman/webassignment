@@ -4,13 +4,14 @@ include('../config/db.php');
 $pageTitle         = 'Staff Login';
 $activePage        = 'staff-login';
 
-// Redirect if already logged in
+/* Redirect if Already Logged In */
 if (session_status() === PHP_SESSION_NONE) session_start();
 if (isset($_SESSION['staff'])) {
     header("Location: dashboard.php");
     exit;
 }
 
+/* Handle Login Form Submission */
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email'] ?? '');
@@ -19,12 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         $errors[] = 'Please enter both email and password.';
     } else {
-        // Query against the `staff` table
+        /* Query Staff Table */
         $stmt = $pdo->prepare("SELECT * FROM staff WHERE Email = ?");
         $stmt->execute([$email]);
         $staff = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // We check if staff exists, has a password, and if password verifies
+        /* Verify Staff Credentials */
         if ($staff && !empty($staff['password']) && password_verify($password, $staff['password'])) {
             $_SESSION['staff'] = [
                 'StaffID' => $staff['StaffID'],
@@ -53,14 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="auth-page" role="main">
   <div class="auth-card">
-
-    <div class="auth-card__logo">
-      <div class="auth-card__logo-mark" aria-hidden="true">SCH</div>
-      <div>
-        <div style="font-family:'Merriweather',serif;font-size:1.15rem;font-weight:700;color:var(--color-primary);">Student Course Hub</div>
-        <div style="font-size:0.7rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Staff Portal</div>
-      </div>
-    </div>
 
     <h1 class="auth-card__title">Staff Sign In</h1>
     <p class="auth-card__subtitle">Access your modules and teaching schedule.</p>

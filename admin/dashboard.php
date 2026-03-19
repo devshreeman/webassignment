@@ -4,14 +4,14 @@ $pageTitle         = 'Dashboard';
 $activeSidebarItem = 'dashboard';
 include('../includes/admin_header.php');
 
-// Stats
+/* Fetch Dashboard Statistics */
 $totalProgrammes = $pdo->query("SELECT COUNT(*) FROM programmes")->fetchColumn();
 $totalPublished  = $pdo->query("SELECT COUNT(*) FROM programmes WHERE IsPublished = 1")->fetchColumn();
 $totalModules    = $pdo->query("SELECT COUNT(*) FROM modules")->fetchColumn();
 $totalStaff      = $pdo->query("SELECT COUNT(*) FROM staff")->fetchColumn();
 $totalInterests  = $pdo->query("SELECT COUNT(*) FROM interestedstudents")->fetchColumn();
 
-// Recent interests
+/* Fetch Recent Interest Registrations */
 $recentInterests = $pdo->query("
     SELECT si.StudentName, si.Email, p.ProgrammeName, si.RegisteredAt
     FROM interestedstudents si
@@ -20,7 +20,7 @@ $recentInterests = $pdo->query("
     LIMIT 5
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// Programmes by interest count
+/* Fetch Top Programmes by Interest */
 $topProgrammes = $pdo->query("
     SELECT p.ProgrammeName, COUNT(si.InterestID) AS IntCount, p.IsPublished
     FROM programmes p

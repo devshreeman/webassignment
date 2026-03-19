@@ -1,9 +1,9 @@
 <?php
 /**
  * Shared Public Footer
- * Determines base path dynamically so links work from any depth.
  */
-// Determine correct relative base (public pages are in /public/)
+
+/* Determine Base Path */
 $footerBase = isset($rootBase) ? $rootBase . 'public/' : '../public/';
 $year = date('Y');
 ?>
@@ -68,7 +68,6 @@ $year = date('Y');
 </footer>
 
 <script>
-  // Mobile navbar toggle
   const navToggle = document.getElementById('navToggle');
   const navbar    = document.getElementById('site-navbar');
   if (navToggle && navbar) {
@@ -76,7 +75,6 @@ $year = date('Y');
       const isOpen = navbar.classList.toggle('is-open');
       navToggle.setAttribute('aria-expanded', String(isOpen));
     });
-    // Close mobile nav when a link is clicked
     navbar.querySelectorAll('nav a').forEach(a => {
       a.addEventListener('click', () => {
         navbar.classList.remove('is-open');
@@ -85,7 +83,6 @@ $year = date('Y');
     });
   }
 
-  // Login dropdown toggle
   const loginToggleBtn = document.getElementById('loginToggleBtn');
   const loginDropdownMenu = document.getElementById('loginDropdownMenu');
   
@@ -97,7 +94,6 @@ $year = date('Y');
       loginDropdownMenu.classList.toggle('is-open');
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       if (!loginToggleBtn.contains(e.target) && !loginDropdownMenu.contains(e.target)) {
         loginToggleBtn.setAttribute('aria-expanded', 'false');

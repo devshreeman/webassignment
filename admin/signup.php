@@ -10,17 +10,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm) {
         $error = "Passwords do not match!";
     } else {
-        // Hash password
+        /* Hash the password */
         $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        // Check if admin already exists
+        /* Check if admin already exists */
         $stmt = $pdo->query("SELECT COUNT(*) FROM admin");
         $count = $stmt->fetchColumn();
 
         if ($count > 0) {
             $error = "An admin already exists! Only one admin account is allowed.";
         } else {
-            // Insert admin
+            /* Insert new admin */
             $stmt = $pdo->prepare("INSERT INTO admin (email, password) VALUES (?, ?)");
             $stmt->execute([$email, $hashed]);
             $success = "Admin account created successfully! You can now log in.";

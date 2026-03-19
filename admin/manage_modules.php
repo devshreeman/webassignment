@@ -32,12 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+/* Handle Module Deletion */
 if (isset($_GET['delete'])) {
     $mid = (int)$_GET['delete'];
     try {
-        // First delete related records in programmemodules
+        /* Delete module associations first */
         $pdo->prepare("DELETE FROM programmemodules WHERE ModuleID = ?")->execute([$mid]);
-        // Then delete the module
         $pdo->prepare("DELETE FROM modules WHERE ModuleID = ?")->execute([$mid]);
         $msg = 'Module deleted successfully.';
     } catch (PDOException $e) {

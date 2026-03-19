@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
         $msg     = 'Please provide a valid name and email address.';
         $msgType = 'error';
     } else {
-        // Check email not taken by another admin
+        /* Check email uniqueness */
         $check = $pdo->prepare("SELECT AdminID FROM admin WHERE email = ? AND AdminID != ?");
         $check->execute([$email, $adminId]);
         if ($check->rowCount() > 0) {

@@ -1,34 +1,25 @@
-/* ============================================================
-   STUDENT COURSE HUB — DESIGN SYSTEM
-   University of Excellence | css/university.css
-   ============================================================ */
-
-/* ========== GOOGLE FONTS ========== */
+/* Google Fonts Import */
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ========== DESIGN TOKENS ========== */
+/* CSS Custom Properties */
 :root {
-  /* -- Brand Palette -- */
-  --color-primary:       #002147;   /* Oxford Navy */
-  --color-primary-dark:  #001530;   /* Deep Navy */
-  --color-primary-light: #0a3a70;   /* Lighter Navy for hover states */
-  --color-accent:        #C5A96A;   /* University Gold */
-  --color-accent-dark:   #a88d50;   /* Dark Gold */
-  --color-accent-light:  #dfc48a;   /* Light Gold for highlights */
+  --color-primary:       #002147;
+  --color-primary-dark:  #001530;
+  --color-primary-light: #0a3a70;
+  --color-accent:        #C5A96A;
+  --color-accent-dark:   #a88d50;
+  --color-accent-light:  #dfc48a;
 
-  /* -- Neutrals -- */
-  --color-bg:            #F5F6F8;   /* Page background */
-  --color-surface:       #FFFFFF;   /* Cards, modals */
-  --color-border:        #E2E6ED;   /* Default borders */
-  --color-border-focus:  #C5A96A;   /* Gold focus ring */
+  --color-bg:            #F5F6F8;
+  --color-surface:       #FFFFFF;
+  --color-border:        #E2E6ED;
+  --color-border-focus:  #C5A96A;
 
-  /* -- Text -- */
-  --color-text:          #1F2937;   /* Primary body text */
-  --color-text-muted:    #6B7280;   /* Secondary / meta text */
-  --color-text-light:    #9CA3AF;   /* Placeholders */
-  --color-text-on-dark:  #FFFFFF;   /* Text on dark backgrounds */
+  --color-text:          #1F2937;
+  --color-text-muted:    #6B7280;
+  --color-text-light:    #9CA3AF;
+  --color-text-on-dark:  #FFFFFF;
 
-  /* -- Semantic Feedback -- */
   --color-success:       #059669;
   --color-success-bg:    #ECFDF5;
   --color-warning:       #D97706;
@@ -38,60 +29,51 @@
   --color-info:          #0284C7;
   --color-info-bg:       #F0F9FF;
 
-  /* -- Typography -- */
   --font-serif:    'Merriweather', Georgia, 'Times New Roman', serif;
   --font-sans:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  --text-xs:    0.75rem;   /* 12px */
-  --text-sm:    0.875rem;  /* 14px */
-  --text-base:  1rem;      /* 16px */
-  --text-lg:    1.125rem;  /* 18px */
-  --text-xl:    1.25rem;   /* 20px */
-  --text-2xl:   1.5rem;    /* 24px */
-  --text-3xl:   1.875rem;  /* 30px */
-  --text-4xl:   2.25rem;   /* 36px */
-  --text-5xl:   3rem;      /* 48px */
+  --text-xs:    0.75rem;
+  --text-sm:    0.875rem;
+  --text-base:  1rem;
+  --text-lg:    1.125rem;
+  --text-xl:    1.25rem;
+  --text-2xl:   1.5rem;
+  --text-3xl:   1.875rem;
+  --text-4xl:   2.25rem;
+  --text-5xl:   3rem;
 
-  /* -- Spacing Scale -- */
-  --space-1:   0.25rem;  /* 4px */
-  --space-2:   0.5rem;   /* 8px */
-  --space-3:   0.75rem;  /* 12px */
-  --space-4:   1rem;     /* 16px */
-  --space-5:   1.25rem;  /* 20px */
-  --space-6:   1.5rem;   /* 24px */
-  --space-8:   2rem;     /* 32px */
-  --space-10:  2.5rem;   /* 40px */
-  --space-12:  3rem;     /* 48px */
-  --space-16:  4rem;     /* 64px */
-  --space-20:  5rem;     /* 80px */
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+  --space-20:  5rem;
 
-  /* -- Border Radius -- */
   --radius-sm:  4px;
   --radius-md:  8px;
   --radius-lg:  12px;
   --radius-xl:  16px;
   --radius-full: 9999px;
 
-  /* -- Shadows (minimal — prefer borders for depth) -- */
   --shadow-sm:  none;
   --shadow-md:  none;
   --shadow-lg:  none;
   --shadow-xl:  none;
 
-  /* -- Transitions -- */
   --transition-fast:   0.15s ease;
   --transition-base:   0.25s ease;
   --transition-slow:   0.4s ease;
 
-  /* -- Layout -- */
   --container-max: 1200px;
   --navbar-h: 72px;
 }
 
-
-/* ============================================================
-   BASE RESET & GLOBAL
-   ============================================================ */
+/* Base Reset */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -152,7 +134,7 @@ p:last-child { margin-bottom: 0; }
 
 ul, ol { padding-left: var(--space-6); }
 
-/* Skip to main content link (Accessibility) */
+/* Accessibility: Skip to main content */
 .skip-link {
   position: absolute;
   top: -40px;
@@ -167,7 +149,7 @@ ul, ol { padding-left: var(--space-6); }
 }
 .skip-link:focus { top: 0; }
 
-/* Screen-reader only */
+/* Screen reader only content */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -179,10 +161,7 @@ ul, ol { padding-left: var(--space-6); }
   border: 0;
 }
 
-
-/* ============================================================
-   LAYOUT CONTAINERS
-   ============================================================ */
+/* Layout Containers */
 .container {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -199,7 +178,7 @@ ul, ol { padding-left: var(--space-6); }
   padding: var(--space-10) 0;
 }
 
-/* Simple CSS grid helpers */
+/* Grid System */
 .grid {
   display: grid;
   gap: var(--space-6);
@@ -216,10 +195,7 @@ ul, ol { padding-left: var(--space-6); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }
 
-
-/* ============================================================
-   NAVBAR
-   ============================================================ */
+/* Navigation Bar */
 .navbar {
   position: sticky;
   top: 0;
@@ -324,7 +300,7 @@ ul, ol { padding-left: var(--space-6); }
   margin-left: auto;
 }
 
-/* Hamburger Toggle */
+/* Mobile menu toggle */
 .navbar__toggle {
   display: none;
   flex-direction: column;
@@ -368,10 +344,7 @@ ul, ol { padding-left: var(--space-6); }
   .navbar__nav a { padding: var(--space-3) var(--space-4); width: 100%; }
 }
 
-
-/* ============================================================
-   HERO SECTION (Public Homepage)
-   ============================================================ */
+/* Hero Section */
 .hero {
   background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 60%, #0d3a6e 100%);
   color: var(--color-text-on-dark);
@@ -468,10 +441,7 @@ ul, ol { padding-left: var(--space-6); }
   .hero { padding: var(--space-16) 0; }
 }
 
-
-/* ============================================================
-   SECTION HEADINGS
-   ============================================================ */
+/* Section Headers */
 .section-header {
   text-align: center;
   margin-bottom: var(--space-12);
@@ -509,7 +479,6 @@ ul, ol { padding-left: var(--space-6); }
   margin: var(--space-4) auto 0;
 }
 
-/* Left-aligned section header variant */
 .section-header--left {
   text-align: left;
 }
@@ -517,10 +486,7 @@ ul, ol { padding-left: var(--space-6); }
   margin-left: 0;
 }
 
-
-/* ============================================================
-   PROGRAMME CARDS
-   ============================================================ */
+/* Programme Cards */
 .programme-card {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -609,10 +575,7 @@ ul, ol { padding-left: var(--space-6); }
   font-weight: 500;
 }
 
-
-/* ============================================================
-   MODULE CARD (within programme detail page)
-   ============================================================ */
+/* Module Cards */
 .module-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -689,10 +652,7 @@ ul, ol { padding-left: var(--space-6); }
   font-size: var(--text-xs);
 }
 
-
-/* ============================================================
-   STAFF CARD
-   ============================================================ */
+/* Staff Cards */
 .staff-card {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -770,10 +730,7 @@ ul, ol { padding-left: var(--space-6); }
 
 .staff-card__email:hover { text-decoration: underline; }
 
-
-/* ============================================================
-   FILTER / SEARCH BAR
-   ============================================================ */
+/* Filter and Search Bar */
 .filter-bar {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -825,10 +782,7 @@ ul, ol { padding-left: var(--space-6); }
   box-shadow: 0 0 0 3px rgba(197,169,106,0.2);
 }
 
-
-/* ============================================================
-   BUTTONS
-   ============================================================ */
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -857,7 +811,6 @@ ul, ol { padding-left: var(--space-6); }
 
 .btn:active { transform: scale(0.98); }
 
-/* Primary — gold on navy */
 .btn-primary {
   background: var(--color-accent);
   color: var(--color-primary);
@@ -870,7 +823,6 @@ ul, ol { padding-left: var(--space-6); }
   box-shadow: 0 4px 12px rgba(197,169,106,0.4);
 }
 
-/* Secondary — outline navy */
 .btn-secondary {
   background: transparent;
   color: var(--color-primary);
@@ -881,7 +833,6 @@ ul, ol { padding-left: var(--space-6); }
   color: var(--color-text-on-dark);
 }
 
-/* Ghost white — for use on dark backgrounds */
 .btn-ghost {
   background: rgba(255,255,255,0.1);
   color: var(--color-text-on-dark);
@@ -892,7 +843,6 @@ ul, ol { padding-left: var(--space-6); }
   color: var(--color-text-on-dark);
 }
 
-/* Danger */
 .btn-danger {
   background: var(--color-error);
   color: #fff;
@@ -904,7 +854,6 @@ ul, ol { padding-left: var(--space-6); }
   color: #fff;
 }
 
-/* Success */
 .btn-success {
   background: var(--color-success);
   color: #fff;
@@ -916,7 +865,6 @@ ul, ol { padding-left: var(--space-6); }
   color: #fff;
 }
 
-/* Sizes */
 .btn-sm {
   font-size: var(--text-xs);
   padding: var(--space-2) var(--space-4);
@@ -932,10 +880,7 @@ ul, ol { padding-left: var(--space-6); }
   border-radius: var(--radius-md);
 }
 
-
-/* ============================================================
-   FORMS
-   ============================================================ */
+/* Forms */
 .form-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1025,10 +970,7 @@ ul, ol { padding-left: var(--space-6); }
   .form-row { grid-template-columns: 1fr; }
 }
 
-
-/* ============================================================
-   ALERT / NOTIFICATION BANNERS
-   ============================================================ */
+/* Alert Messages */
 .alert {
   display: flex;
   align-items: flex-start;
@@ -1064,10 +1006,7 @@ ul, ol { padding-left: var(--space-6); }
   color: #075985;
 }
 
-
-/* ============================================================
-   DATA TABLES (Admin)
-   ============================================================ */
+/* Data Tables */
 .data-table-wrapper {
   overflow-x: auto;
   border-radius: var(--radius-lg);
@@ -1125,7 +1064,6 @@ ul, ol { padding-left: var(--space-6); }
   white-space: nowrap;
 }
 
-/* Published / Unpublished status badges */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -1156,10 +1094,7 @@ ul, ol { padding-left: var(--space-6); }
 }
 .status-badge--draft::before { background: var(--color-warning); }
 
-
-/* ============================================================
-   ADMIN LAYOUT (Sidebar + Main)
-   ============================================================ */
+/* Admin Layout */
 .admin-layout {
   display: flex;
   min-height: calc(100vh - var(--navbar-h));
@@ -1274,7 +1209,6 @@ ul, ol { padding-left: var(--space-6); }
   margin-bottom: 0;
 }
 
-/* Stat Cards on Admin Dashboard */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1359,10 +1293,7 @@ ul, ol { padding-left: var(--space-6); }
   color: var(--color-primary);
 }
 
-
-/* ============================================================
-   AUTH PAGES (Login / Signup)
-   ============================================================ */
+/* Authentication Pages */
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -1431,10 +1362,7 @@ ul, ol { padding-left: var(--space-6); }
   font-weight: 600;
 }
 
-
-/* ============================================================
-   INTEREST REGISTRATION CARD
-   ============================================================ */
+/* Interest Registration CTA */
 .interest-cta {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
   border-radius: var(--radius-xl);
@@ -1461,10 +1389,7 @@ ul, ol { padding-left: var(--space-6); }
   max-width: 500px;
 }
 
-
-/* ============================================================
-   PAGINATION
-   ============================================================ */
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -1502,10 +1427,7 @@ ul, ol { padding-left: var(--space-6); }
   font-weight: 700;
 }
 
-
-/* ============================================================
-   BREADCRUMB
-   ============================================================ */
+/* Breadcrumb Navigation */
 .breadcrumb {
   display: flex;
   align-items: center;
@@ -1523,10 +1445,7 @@ ul, ol { padding-left: var(--space-6); }
 .breadcrumb__item a:hover { text-decoration: underline; }
 .breadcrumb__separator { color: var(--color-border); }
 
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
+/* Site Footer */
 .site-footer {
   background: var(--color-primary-dark);
   color: rgba(255,255,255,0.65);
@@ -1610,10 +1529,7 @@ ul, ol { padding-left: var(--space-6); }
   .site-footer__grid { grid-template-columns: 1fr; }
 }
 
-
-/* ============================================================
-   UTILITY CLASSES
-   ============================================================ */
+/* Utility Classes */
 .mt-2  { margin-top: var(--space-2); }
 .mt-4  { margin-top: var(--space-4); }
 .mt-6  { margin-top: var(--space-6); }
@@ -1649,7 +1565,6 @@ ul, ol { padding-left: var(--space-6); }
   margin: var(--space-8) 0;
 }
 
-/* Page section spacing */
 .section {
   padding: var(--space-16) 0;
 }
@@ -1658,7 +1573,6 @@ ul, ol { padding-left: var(--space-6); }
   padding: var(--space-10) 0;
 }
 
-/* Empty state */
 .empty-state {
   text-align: center;
   padding: var(--space-16) var(--space-8);
@@ -1679,24 +1593,19 @@ ul, ol { padding-left: var(--space-6); }
   margin-bottom: var(--space-2);
 }
 
-/* Responsive images */
 .img-cover {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Focus visible global override for keyboard nav */
 :focus-visible {
   outline: 3px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 
-
-/* ============================================================
-   GRID LAYOUT UTILITIES
-   ============================================================ */
+/* Grid Layout Utilities */
 .grid {
   display: grid;
   gap: var(--space-6);
@@ -1720,10 +1629,7 @@ ul, ol { padding-left: var(--space-6); }
   gap: var(--space-6);
 }
 
-
-/* ============================================================
-   CONTAINER VARIANTS
-   ============================================================ */
+/* Container Variants */
 .container--narrow {
   max-width: 760px;
   margin-left: auto;
@@ -1732,10 +1638,7 @@ ul, ol { padding-left: var(--space-6); }
   padding-right: var(--space-6);
 }
 
-
-/* ============================================================
-   PROGRAMME DETAIL — Two-column sticky layout
-   ============================================================ */
+/* Programme Detail Layout */
 .prog-detail-layout {
   display: grid;
   grid-template-columns: 1fr 340px;
@@ -1748,12 +1651,7 @@ ul, ol { padding-left: var(--space-6); }
   top: calc(var(--navbar-h) + var(--space-6));
 }
 
-
-/* ============================================================
-   EXTRA RESPONSIVE BREAKPOINTS
-   ============================================================ */
-
-/* Tablets and below */
+/* Responsive: Tablets */
 @media (max-width: 1024px) {
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
@@ -1762,10 +1660,7 @@ ul, ol { padding-left: var(--space-6); }
   }
 }
 
-
-
-
-/* Mobile phones */
+/* Responsive: Mobile */
 @media (max-width: 640px) {
   .grid-2 { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr; }
@@ -1800,15 +1695,12 @@ ul, ol { padding-left: var(--space-6); }
     padding-right: var(--space-4);
   }
 
-  /* Register interest form */
   .form-card {
     padding: var(--space-6);
   }
 }
 
-/* ============================================================
-   LOGIN DROPDOWN (Header)
-   ============================================================ */
+/* Login Dropdown Menu */
 .login-dropdown {
   position: relative;
   display: inline-block;

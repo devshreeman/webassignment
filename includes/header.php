@@ -1,11 +1,12 @@
 <?php
 /**
- * Shared Public Navbar + Head
- * Usage: include('../includes/header.php');
- * Vars: $pageTitle, $activePage, $cssBase, $rootBase
+ * Shared Public Header
  */
+
+/* Initialize Session */
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+/* Set Default Variables */
 $pageTitle   = $pageTitle   ?? 'Student Course Hub';
 $activePage  = $activePage  ?? '';
 $cssBase     = $cssBase     ?? '../';

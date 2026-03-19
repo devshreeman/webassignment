@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 /**
  * Unified Programme Editor — details + modules on one page.
  * URL: edit_programmes.php?id=N
@@ -9,23 +12,26 @@ $activeSidebarItem = 'programmes';
 include('../includes/admin_header.php');
 
 $id = (int)($_GET['id'] ?? 0);
-if (!$id) { header("Location: manage_programmes.php"); exit; }
+if (!$id) { 
+    header("Location: manage_programmes.php"); 
+    exit; 
+}
 
 $msg     = '';
 $msgType = 'success';
 
 /* ── Handle Programme Update ── */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'update_programme') {
-    $name     = trim($_POST['ProgrammeName']);
-    $desc     = trim($_POST['Description']);
-    $level    = (int)$_POST['LevelID'];
+    $name     = trim($_POST['ProgrammeName'] ?? '');
+    $desc     = trim($_POST['Description'] ?? '');
+    $level    = (int)($_POST['LevelID'] ?? 0);
     $leader   = !empty($_POST['ProgrammeLeaderID']) ? (int)$_POST['ProgrammeLeaderID'] : null;
-    $duration = (int)$_POST['Duration'];
+    $duration = (int)($_POST['Duration'] ?? 3);
     $pub      = isset($_POST['IsPublished']) ? 1 : 0;
     $image    = null;
     $updateImage = false;
 
-    // Handle image upload
+    /* Handle Image Upload */
     if (isset($_FILES['Image']) && $_FILES['Image']['error'] === UPLOAD_ERR_OK) {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $maxSize = 5 * 1024 * 1024; // 5MB
@@ -41,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
             $uploadPath = $uploadDir . $filename;
             
             if (move_uploaded_file($_FILES['Image']['tmp_name'], $uploadPath)) {
-                // Delete old image if exists
+                /* Delete old image if exists */
                 $oldImage = $pdo->prepare("SELECT Image FROM programmes WHERE ProgrammeID = ?");
                 $oldImage->execute([$id]);
                 $oldImagePath = $oldImage->fetchColumn();
@@ -61,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
         }
     }
 
-    // Handle image removal
+    /* Handle Image Removal */
     if (isset($_POST['RemoveImage']) && $_POST['RemoveImage'] === '1') {
         $oldImage = $pdo->prepare("SELECT Image FROM programmes WHERE ProgrammeID = ?");
         $oldImage->execute([$id]);
@@ -142,9 +148,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'link
 }
 
 /* ── Handle Remove Module Link from Programme ── */
+/* Handle Module Removal from Programme */
 if (isset($_GET['remove_module'])) {
     $mid = (int)$_GET['remove_module'];
-    // Only delete the link from programmemodules. Do NOT delete the actual module.
     $pdo->prepare("DELETE FROM programmemodules WHERE ProgrammeID=? AND ModuleID=?")->execute([$id, $mid]);
     header("Location: edit_programmes.php?id=$id&msg=module_removed");
     exit;

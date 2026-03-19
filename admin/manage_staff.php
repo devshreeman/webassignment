@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bio   = trim($_POST['Bio']);
     $pass  = trim($_POST['Password'] ?? '');
     
-    // Handle File Upload
+    /* Handle Photo Upload */
     $photoPath = '';
     if (isset($_FILES['Photo']) && $_FILES['Photo']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['Photo']['tmp_name'];
@@ -43,10 +43,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+/* Handle Staff Deletion */
 if (isset($_GET['delete'])) {
     $sid = (int)$_GET['delete'];
-    $pdo->prepare("DELETE FROM staff WHERE StaffID = ?")->execute([$sid]);
-    $msg = 'Staff member removed.';
+    try {
+        /* Check if staff is referenced */
+        $progCount = $pdo->prepare("SELECT COUNT(*) FROM programmes WHERE ProgrammeLeaderID = ?");
+        $progCount->execute([$sid]);
+        $progRefs = $progCount->fetchColumn();
+        
+        $modCount = $pdo->prepare("SELECT COUNT(*) FROM modules WHERE ModuleLeaderID = ?");
+        $modCount->execute([$sid]);
+        $modRefs = $modCount->fetchColumn();
+        
+        if ($progRefs > 0 || $modRefs > 0) {
+            $msg = "Cannot delete staff member who is assigned as programme or module leader. Please reassign their responsibilities first.";
+            $msgType = 'error';
+        } else {
+            $pdo->prepare("DELETE FROM staff WHERE StaffID = ?")->execute([$sid]);
+            $msg = 'Staff member removed successfully.';
+        }
+    } catch (PDOException $e) {
+        $msg = 'Error deleting staff member: ' . $e->getMessage();
+        $msgType = 'error';
+    }
 }
 
 $staffList = $pdo->query("

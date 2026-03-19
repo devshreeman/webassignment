@@ -14,7 +14,6 @@ try {
     echo "<h2>Database Setup & Migration</h2>";
     echo "<hr>";
     
-    // 1. Add password column to staff table if missing
     echo "<h3>1. Checking staff table structure...</h3>";
     $result = $pdo->query("SHOW COLUMNS FROM staff LIKE 'password'");
     if ($result->rowCount() == 0) {
@@ -24,7 +23,6 @@ try {
         $success[] = "✓ Staff table already has password column";
     }
     
-    // 2. Populate levels table if empty
     echo "<h3>2. Checking levels table...</h3>";
     $count = $pdo->query("SELECT COUNT(*) FROM levels")->fetchColumn();
     if ($count == 0) {
@@ -34,7 +32,6 @@ try {
         $success[] = "✓ Levels table already has $count record(s)";
     }
     
-    // 3. Create contact_messages table if missing
     echo "<h3>3. Checking contact_messages table...</h3>";
     $tables = $pdo->query("SHOW TABLES LIKE 'contact_messages'")->fetchAll();
     if (count($tables) == 0) {
@@ -52,10 +49,8 @@ try {
         $success[] = "✓ Contact_messages table already exists";
     }
     
-    // 4. Verify foreign key constraints
     echo "<h3>4. Verifying database integrity...</h3>";
     
-    // Check for orphaned records
     $orphanedModules = $pdo->query("
         SELECT COUNT(*) FROM modules m 
         WHERE m.ModuleLeaderID IS NOT NULL 
@@ -80,7 +75,6 @@ try {
         $success[] = "✓ All programmes have valid leaders";
     }
     
-    // 5. Check uploads directory
     echo "<h3>5. Checking file system...</h3>";
     $uploadDir = '../uploads/';
     if (!is_dir($uploadDir)) {
@@ -96,7 +90,6 @@ try {
         $success[] = "✓ Uploads directory is writable";
     }
     
-    // Display results
     echo "<hr>";
     echo "<h3>Setup Results:</h3>";
     

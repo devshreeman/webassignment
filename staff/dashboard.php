@@ -9,13 +9,13 @@ if (!isset($_SESSION['staff'])) {
 
 $staff = $_SESSION['staff'];
 
-// Variables for header
+/* Page Configuration */
 $pageTitle  = 'Staff Dashboard';
 $activePage = 'staff-dashboard';
 $cssBase    = '../';
 $rootBase   = '../';
 
-// 1. Get Modules Led
+/* Fetch Modules Led by Staff Member */
 $stmtModules = $pdo->prepare("
     SELECT m.ModuleID, m.ModuleName, m.Description, 
            GROUP_CONCAT(DISTINCT p.ProgrammeName SEPARATOR ', ') AS ProgrammeName
@@ -29,7 +29,7 @@ $stmtModules = $pdo->prepare("
 $stmtModules->execute([$staff['StaffID']]);
 $ledModules = $stmtModules->fetchAll(PDO::FETCH_ASSOC);
 
-// 2. Get Programmes containing modules led
+/* Fetch Programmes Containing Staff's Modules */
 $stmtProgrammes = $pdo->prepare("
     SELECT DISTINCT p.ProgrammeID, p.ProgrammeName, l.LevelName,
            (SELECT COUNT(*) FROM programmemodules pm2 WHERE pm2.ProgrammeID = p.ProgrammeID) as TotalModules

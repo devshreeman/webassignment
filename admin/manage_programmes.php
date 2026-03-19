@@ -1,4 +1,9 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+ob_start();
+
 include('../config/db.php');
 $pageTitle         = 'Manage Programmes';
 $activeSidebarItem = 'programmes';
@@ -7,19 +12,20 @@ include('../includes/admin_header.php');
 $msg     = '';
 $msgType = 'success';
 
+/* Handle Form Actions */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['_action'] ?? '';
 
     if ($action === 'add') {
-        $name     = trim($_POST['ProgrammeName']);
-        $desc     = trim($_POST['Description']);
-        $level    = (int)$_POST['LevelID'];
+        $name     = trim($_POST['ProgrammeName'] ?? '');
+        $desc     = trim($_POST['Description'] ?? '');
+        $level    = (int)($_POST['LevelID'] ?? 0);
         $leader   = !empty($_POST['ProgrammeLeaderID']) ? (int)$_POST['ProgrammeLeaderID'] : null;
-        $duration = (int)$_POST['Duration'];
+        $duration = (int)($_POST['Duration'] ?? 3);
         $pub      = isset($_POST['IsPublished']) ? 1 : 0;
         $image    = null;
 
-        // Handle image upload
+        /* Handle Image Upload */
         if (isset($_FILES['Image']) && $_FILES['Image']['error'] === UPLOAD_ERR_OK) {
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             $maxSize = 5 * 1024 * 1024; // 5MB
@@ -51,8 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("INSERT INTO programmes (ProgrammeName, Description, LevelID, ProgrammeLeaderID, Duration, Image, IsPublished) VALUES (?,?,?,?,?,?,?)");
                 $stmt->execute([$name, $desc, $level, $leader, $duration, $image, $pub]);
                 $newId = $pdo->lastInsertId();
+                
+                /* Redirect to edit page */
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
                 header("Location: edit_programmes.php?id=$newId&msg=created");
-                exit;
+                exit();
             } catch (PDOException $e) {
                 $msg     = 'Database error: ' . $e->getMessage();
                 $msgType = 'error';
@@ -69,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+/* Handle Programme Deletion */
 if (isset($_GET['delete'])) {
     $pid = (int)$_GET['delete'];
     try {
-        // First delete related records in programmemodules
+        /* Delete Related Records First */
         $pdo->prepare("DELETE FROM programmemodules WHERE ProgrammeID = ?")->execute([$pid]);
-        // Then delete the programme (interestedstudents will cascade automatically)
         $pdo->prepare("DELETE FROM programmes WHERE ProgrammeID = ?")->execute([$pid]);
         $msg = 'Programme deleted successfully.';
     } catch (PDOException $e) {
