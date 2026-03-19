@@ -11,7 +11,7 @@ $id = (int)$_GET['id'];
 // Fetch programme + level + leader
 $stmt = $pdo->prepare("
     SELECT p.*, l.LevelName,
-           s.Name AS LeaderName, s.Title AS LeaderTitle, s.Email AS LeaderEmail, s.Photo AS LeaderPhoto
+           s.Name AS LeaderName, s.Email AS LeaderEmail, s.Photo AS LeaderPhoto
     FROM programmes p
     LEFT JOIN levels l ON p.LevelID = l.LevelID
     LEFT JOIN staff s ON p.ProgrammeLeaderID = s.StaffID
@@ -29,7 +29,7 @@ if (!$programme) {
 // Fetch modules with year from programmemodules + module leader
 $mod_stmt = $pdo->prepare("
     SELECT m.ModuleID, m.ModuleName, m.Description, pm.Year,
-           s.Name AS LeaderName, s.Title AS LeaderTitle, s.StaffID AS LeaderID
+           s.Name AS LeaderName, s.StaffID AS LeaderID
     FROM programmemodules pm
     JOIN modules m ON pm.ModuleID = m.ModuleID
     LEFT JOIN staff s ON m.ModuleLeaderID = s.StaffID
@@ -80,8 +80,11 @@ include('../includes/header.php');
 </div>
 
 <!-- PROGRAMME HERO BANNER -->
-<section style="background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%); padding: var(--space-12) 0; color: #fff;">
-  <div class="container">
+<section style="background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%); padding: var(--space-12) 0; color: #fff; position: relative; overflow: hidden;">
+  <?php if (!empty($programme['Image'])): ?>
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; background-image: url('<?= '../' . htmlspecialchars($programme['Image']) ?>'); background-size: cover; background-position: center;"></div>
+  <?php endif; ?>
+  <div class="container" style="position: relative; z-index: 1;">
     <span style="display:inline-block;background:rgba(197,169,106,0.2);border:1px solid rgba(197,169,106,0.4);color:#dfc48a;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.25rem 0.75rem;border-radius:9999px;margin-bottom:1rem;">
       <?= htmlspecialchars($programme['LevelName']) ?>
     </span>
@@ -124,7 +127,6 @@ include('../includes/header.php');
               </h3>
               <?php foreach ($yearModules as $m): ?>
                 <article class="module-card">
-                  <span class="module-card__year-tag" aria-label="Year <?= htmlspecialchars($year) ?>">Year <?= htmlspecialchars($year) ?></span>
                   <h4 class="module-card__title"><?= htmlspecialchars($m['ModuleName']) ?></h4>
                   <?php if (!empty($m['Description'])): ?>
                     <p class="module-card__description"><?= htmlspecialchars(mb_substr($m['Description'], 0, 200)) ?><?= strlen($m['Description']) > 200 ? '…' : '' ?></p>
@@ -135,7 +137,7 @@ include('../includes/header.php');
                         <?= initials($m['LeaderName']) ?>
                       </div>
                       <div>
-                        <div class="module-card__leader-name"><?= htmlspecialchars($m['LeaderTitle'] . ' ' . $m['LeaderName']) ?></div>
+                        <div class="module-card__leader-name"><?= htmlspecialchars($m['LeaderName']) ?></div>
                         <div class="module-card__leader-label">Module Leader</div>
                       </div>
                     </div>
@@ -161,13 +163,13 @@ include('../includes/header.php');
           <div style="display:flex;align-items:center;gap:var(--space-4);">
             <div style="width:56px;height:56px;border-radius:50%;overflow:hidden;background:var(--color-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:1.1rem;font-weight:700;color:var(--color-accent);">
               <?php if (!empty($programme['LeaderPhoto'])): ?>
-                <img src="<?= htmlspecialchars($programme['LeaderPhoto']) ?>" alt="<?= htmlspecialchars($programme['LeaderName']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                <img src="<?= '../' . htmlspecialchars($programme['LeaderPhoto']) ?>" alt="<?= htmlspecialchars($programme['LeaderName']) ?>" style="width:100%;height:100%;object-fit:cover;">
               <?php else: ?>
                 <?= initials($programme['LeaderName']) ?>
               <?php endif; ?>
             </div>
             <div>
-              <p style="font-weight:600;color:var(--color-text);margin-bottom:2px;"><?= htmlspecialchars($programme['LeaderTitle'] . ' ' . $programme['LeaderName']) ?></p>
+              <p style="font-weight:600;color:var(--color-text);margin-bottom:2px;"><?= htmlspecialchars($programme['LeaderName']) ?></p>
               <p style="font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:0;"><?= htmlspecialchars($programme['LeaderEmail'] ?? '') ?></p>
             </div>
           </div>

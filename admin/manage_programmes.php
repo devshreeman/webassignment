@@ -17,15 +17,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $leader   = !empty($_POST['ProgrammeLeaderID']) ? (int)$_POST['ProgrammeLeaderID'] : null;
         $duration = (int)$_POST['Duration'];
         $pub      = isset($_POST['IsPublished']) ? 1 : 0;
+        $image    = null;
 
-        if ($name && $level) {
-            $stmt = $pdo->prepare("INSERT INTO programmes (ProgrammeName, Description, LevelID, ProgrammeLeaderID, Duration, IsPublished) VALUES (?,?,?,?,?,?)");
-            $stmt->execute([$name, $desc, $level, $leader, $duration, $pub]);
-            $newId = $pdo->lastInsertId();
-            // Redirect to unified edit page so admin can immediately add modules
-            header("Location: edit_programmes.php?id=$newId&msg=created");
-            exit;
-        } else {
+        // Handle image upload
+        if (isset($_FILES['Image']) && $_FILES['Image']['error'] === UPLOAD_ERR_OK) {
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (in_array($_FILES['Image']['type'], $allowedTypes) && $_FILES['Image']['size'] <= $maxSize) {
+                $uploadDir = '../uploads/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                $extension = pathinfo($_FILES['Image']['name'], PATHINFO_EXTENSION);
+                $filename = 'programme_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $extension;
+                $uploadPath = $uploadDir . $filename;
+                
+                if (move_uploaded_file($_FILES['Image']['tmp_name'], $uploadPath)) {
+                    $image = 'uploads/' . $filename;
+                } else {
+                    $msg = 'Failed to upload image.';
+                    $msgType = 'error';
+                }
+            } else {
+                $msg = 'Invalid image file. Please upload JPG, PNG, GIF, or WebP (max 5MB).';
+                $msgType = 'error';
+            }
+        }
+
+        if ($name && $level && $msgType !== 'error') {
+            try {
+                $stmt = $pdo->prepare("INSERT INTO programmes (ProgrammeName, Description, LevelID, ProgrammeLeaderID, Duration, Image, IsPublished) VALUES (?,?,?,?,?,?,?)");
+                $stmt->execute([$name, $desc, $level, $leader, $duration, $image, $pub]);
+                $newId = $pdo->lastInsertId();
+                header("Location: edit_programmes.php?id=$newId&msg=created");
+                exit;
+            } catch (PDOException $e) {
+                $msg     = 'Database error: ' . $e->getMessage();
+                $msgType = 'error';
+            }
+        } elseif (!$name || !$level) {
             $msg     = 'Programme name and level are required.';
             $msgType = 'error';
         }
@@ -39,8 +71,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if (isset($_GET['delete'])) {
     $pid = (int)$_GET['delete'];
-    $pdo->prepare("DELETE FROM programmes WHERE ProgrammeID = ?")->execute([$pid]);
-    $msg = 'Programme deleted.';
+    try {
+        // First delete related records in programmemodules
+        $pdo->prepare("DELETE FROM programmemodules WHERE ProgrammeID = ?")->execute([$pid]);
+        // Then delete the programme (interestedstudents will cascade automatically)
+        $pdo->prepare("DELETE FROM programmes WHERE ProgrammeID = ?")->execute([$pid]);
+        $msg = 'Programme deleted successfully.';
+    } catch (PDOException $e) {
+        $msg = 'Error deleting programme: ' . $e->getMessage();
+        $msgType = 'error';
+    }
 }
 
 $programmes = $pdo->query("
@@ -53,7 +93,7 @@ $programmes = $pdo->query("
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 $levels = $pdo->query("SELECT * FROM levels ORDER BY LevelName")->fetchAll(PDO::FETCH_ASSOC);
-$staff  = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
+$staff  = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="admin-topbar">
@@ -73,7 +113,7 @@ $staff  = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name")->f
     <h2 class="admin-section-card__title">Add New Programme</h2>
     <span style="font-size:var(--text-xs);color:var(--color-text-muted);">After saving, you can add modules on the next page.</span>
   </div>
-  <form method="POST" action="">
+  <form method="POST" action="" enctype="multipart/form-data">
     <input type="hidden" name="_action" value="add">
     <div class="form-row">
       <div class="form-group">
@@ -105,7 +145,7 @@ $staff  = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name")->f
         <select class="form-select" id="ProgrammeLeaderID" name="ProgrammeLeaderID">
           <option value="">— Not yet assigned —</option>
           <?php foreach ($staff as $s): ?>
-            <option value="<?= $s['StaffID'] ?>"><?= htmlspecialchars($s['Title'] . ' ' . $s['Name']) ?></option>
+            <option value="<?= $s['StaffID'] ?>"><?= htmlspecialchars($s['Name']) ?></option>
           <?php endforeach; ?>
         </select>
       </div>
@@ -114,6 +154,11 @@ $staff  = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name")->f
       <label class="form-label" for="Description">Description</label>
       <textarea class="form-textarea" id="Description" name="Description" rows="3"
                 placeholder="Briefly describe the programme aims and career outcomes…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="Image">Programme Image</label>
+      <input class="form-input" type="file" id="Image" name="Image" accept="image/jpeg,image/png,image/gif,image/webp">
+      <small class="form-hint">Optional. JPG, PNG, GIF, or WebP. Max 5MB.</small>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
       <label style="display:flex;align-items:center;gap:var(--space-3);cursor:pointer;font-size:var(--text-sm);">

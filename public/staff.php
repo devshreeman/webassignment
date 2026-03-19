@@ -2,7 +2,7 @@
 include('../config/db.php');
 
 $staff = $pdo->query("
-    SELECT StaffID, Name, Title, Email, Bio, Photo
+    SELECT StaffID, Name, Email, Bio, Photo
     FROM staff
     ORDER BY Name
 ")->fetchAll(PDO::FETCH_ASSOC);
@@ -44,8 +44,8 @@ include('../includes/header.php');
             <div class="staff-card__photo-wrapper">
               <?php if (!empty($s['Photo'])): ?>
                 <img class="staff-card__photo"
-                     src="<?= htmlspecialchars($s['Photo']) ?>"
-                     alt="Photo of <?= htmlspecialchars($s['Title'] . ' ' . $s['Name']) ?>"
+                     src="<?= '../' . htmlspecialchars($s['Photo']) ?>"
+                     alt="Photo of <?= htmlspecialchars($s['Name']) ?>"
                      loading="lazy">
               <?php else: ?>
                 <div class="staff-card__initials" aria-hidden="true">
@@ -54,7 +54,6 @@ include('../includes/header.php');
               <?php endif; ?>
             </div>
 
-            <span class="staff-card__title-badge"><?= htmlspecialchars($s['Title']) ?></span>
             <h3 class="staff-card__name"><?= htmlspecialchars($s['Name']) ?></h3>
 
             <?php if (!empty($s['Bio'])): ?>

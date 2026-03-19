@@ -1,4 +1,6 @@
 <?php
+include('../config/db.php');
+
 $pageTitle  = 'Contact Us';
 $activePage = 'contact';
 $cssBase    = '../';
@@ -11,14 +13,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email   = trim($_POST['email'] ?? '');
     $subject = trim($_POST['subject'] ?? '');
     $message = trim($_POST['message'] ?? '');
+    $honeypot = $_POST['_hp'] ?? '';
 
     if (empty($name))    $errors[] = 'Please enter your name.';
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Please enter a valid email address.';
     if (empty($subject)) $errors[] = 'Please select a subject.';
     if (strlen($message) < 20) $errors[] = 'Message must be at least 20 characters.';
+    if (!empty($honeypot)) $errors[] = 'Spam detected.';
 
     if (empty($errors)) {
-        $successMsg = 'Thank you for your message. Our team will respond within 2 working days.';
+        try {
+            // Create table if it doesn't exist
+            $pdo->exec("CREATE TABLE IF NOT EXISTS contact_messages (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(150) NOT NULL,
+                subject VARCHAR(200) NOT NULL,
+                message TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                is_read TINYINT(1) DEFAULT 0
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+
+            $stmt = $pdo->prepare("INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$name, $email, $subject, $message]);
+            $successMsg = 'Thank you for your message. Our team will respond within 2 working days.';
+        } catch (PDOException $e) {
+            $errors[] = 'Unable to send message. Please try again later.';
+        }
     }
 }
 
@@ -29,7 +50,7 @@ $contactDetails = [
     [
         'icon' => '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
         'label' => 'Address',
-        'value' => 'University of Excellence<br>1 Academic Way<br>Excellence City, EC1 2UE<br>United Kingdom',
+        'value' => 'Student Course Hub<br>1 Academic Way<br>Excellence City, EC1 2SCH<br>United Kingdom',
         'raw'   => true,
     ],
     [

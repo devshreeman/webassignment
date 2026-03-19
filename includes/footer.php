@@ -16,11 +16,10 @@ $year = date('Y');
       <!-- Brand -->
       <div class="site-footer__brand">
         <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
-          <div style="width:38px;height:38px;border:2px solid #C5A96A;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Merriweather',serif;font-weight:900;color:#C5A96A;font-size:1rem;flex-shrink:0;">UE</div>
-          <span style="font-family:'Merriweather',serif;font-size:0.95rem;font-weight:700;color:#fff;line-height:1.2;">University<br>of Excellence</span>
+          <span style="font-family:'Merriweather',serif;font-size:1.15rem;font-weight:700;color:#fff;line-height:1.2;">Student Course Hub</span>
         </div>
         <p>Inspiring minds, shaping futures. Explore undergraduate and postgraduate programmes designed to launch your career.</p>
-        <p style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:1.25rem;margin-bottom:0;">WCAG 2.1 AA Compliant &nbsp;·&nbsp; UK GDPR Registered</p>
+        <p style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:1.25rem;margin-bottom:0;">WCAG 2.1 AA Compliant | UK GDPR Registered</p>
       </div>
 
       <!-- Programmes -->
@@ -40,7 +39,6 @@ $year = date('Y');
         <ul class="site-footer__links">
           <li><a href="<?= $footerBase ?>open-days.php">Open Days</a></li>
           <li><a href="<?= $footerBase ?>contact.php">Contact Admissions</a></li>
-          <li><a href="<?= $footerBase ?>contact.php?s=fees">Fees &amp; Funding</a></li>
         </ul>
       </div>
 
@@ -58,7 +56,7 @@ $year = date('Y');
 
     <div class="site-footer__bottom">
       <p class="site-footer__copyright">
-        &copy; <?= $year ?> University of Excellence. All rights reserved.
+        &copy; <?= $year ?> Student Course Hub. All rights reserved.
       </p>
       <div class="site-footer__legal">
         <a href="<?= $footerBase ?>privacy.php">Privacy</a>
@@ -79,11 +77,32 @@ $year = date('Y');
       navToggle.setAttribute('aria-expanded', String(isOpen));
     });
     // Close mobile nav when a link is clicked
-    navbar.querySelectorAll('a').forEach(a => {
+    navbar.querySelectorAll('nav a').forEach(a => {
       a.addEventListener('click', () => {
         navbar.classList.remove('is-open');
         navToggle.setAttribute('aria-expanded', 'false');
       });
+    });
+  }
+
+  // Login dropdown toggle
+  const loginToggleBtn = document.getElementById('loginToggleBtn');
+  const loginDropdownMenu = document.getElementById('loginDropdownMenu');
+  
+  if (loginToggleBtn && loginDropdownMenu) {
+    loginToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // prevent document click from firing
+      const isExpanded = loginToggleBtn.getAttribute('aria-expanded') === 'true';
+      loginToggleBtn.setAttribute('aria-expanded', !isExpanded);
+      loginDropdownMenu.classList.toggle('is-open');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!loginToggleBtn.contains(e.target) && !loginDropdownMenu.contains(e.target)) {
+        loginToggleBtn.setAttribute('aria-expanded', 'false');
+        loginDropdownMenu.classList.remove('is-open');
+      }
     });
   }
 </script>

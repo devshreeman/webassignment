@@ -22,12 +22,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
     $leader   = !empty($_POST['ProgrammeLeaderID']) ? (int)$_POST['ProgrammeLeaderID'] : null;
     $duration = (int)$_POST['Duration'];
     $pub      = isset($_POST['IsPublished']) ? 1 : 0;
+    $image    = null;
+    $updateImage = false;
 
-    if ($name && $level) {
-        $pdo->prepare("UPDATE programmes SET ProgrammeName=?, Description=?, LevelID=?, ProgrammeLeaderID=?, Duration=?, IsPublished=? WHERE ProgrammeID=?")
-            ->execute([$name, $desc, $level, $leader, $duration, $pub, $id]);
+    // Handle image upload
+    if (isset($_FILES['Image']) && $_FILES['Image']['error'] === UPLOAD_ERR_OK) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        
+        if (in_array($_FILES['Image']['type'], $allowedTypes) && $_FILES['Image']['size'] <= $maxSize) {
+            $uploadDir = '../uploads/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            $extension = pathinfo($_FILES['Image']['name'], PATHINFO_EXTENSION);
+            $filename = 'programme_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $extension;
+            $uploadPath = $uploadDir . $filename;
+            
+            if (move_uploaded_file($_FILES['Image']['tmp_name'], $uploadPath)) {
+                // Delete old image if exists
+                $oldImage = $pdo->prepare("SELECT Image FROM programmes WHERE ProgrammeID = ?");
+                $oldImage->execute([$id]);
+                $oldImagePath = $oldImage->fetchColumn();
+                if ($oldImagePath && file_exists('../' . $oldImagePath)) {
+                    unlink('../' . $oldImagePath);
+                }
+                
+                $image = 'uploads/' . $filename;
+                $updateImage = true;
+            } else {
+                $msg = 'Failed to upload image.';
+                $msgType = 'error';
+            }
+        } else {
+            $msg = 'Invalid image file. Please upload JPG, PNG, GIF, or WebP (max 5MB).';
+            $msgType = 'error';
+        }
+    }
+
+    // Handle image removal
+    if (isset($_POST['RemoveImage']) && $_POST['RemoveImage'] === '1') {
+        $oldImage = $pdo->prepare("SELECT Image FROM programmes WHERE ProgrammeID = ?");
+        $oldImage->execute([$id]);
+        $oldImagePath = $oldImage->fetchColumn();
+        if ($oldImagePath && file_exists('../' . $oldImagePath)) {
+            unlink('../' . $oldImagePath);
+        }
+        $image = null;
+        $updateImage = true;
+    }
+
+    if ($name && $level && $msgType !== 'error') {
+        if ($updateImage) {
+            $pdo->prepare("UPDATE programmes SET ProgrammeName=?, Description=?, LevelID=?, ProgrammeLeaderID=?, Duration=?, Image=?, IsPublished=? WHERE ProgrammeID=?")
+                ->execute([$name, $desc, $level, $leader, $duration, $image, $pub, $id]);
+        } else {
+            $pdo->prepare("UPDATE programmes SET ProgrammeName=?, Description=?, LevelID=?, ProgrammeLeaderID=?, Duration=?, IsPublished=? WHERE ProgrammeID=?")
+                ->execute([$name, $desc, $level, $leader, $duration, $pub, $id]);
+        }
         $msg = 'Programme details saved successfully.';
-    } else {
+    } elseif (!$name || !$level) {
         $msg     = 'Programme name and level are required.';
         $msgType = 'error';
     }
@@ -44,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_
     if ($modName) {
         try {
             $pdo->beginTransaction();
-            $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID, StaffID, ProgrammeID, IsPublished) VALUES (?,?,?,?,?,?)")
-                ->execute([$modName, $modDesc, $leaderId, $leaderId ?? 1, $id, $pub]);
+            $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID, IsPublished) VALUES (?,?,?,?)")
+                ->execute([$modName, $modDesc, $leaderId, $pub]);
             $newMid = $pdo->lastInsertId();
             $pdo->prepare("INSERT INTO programmemodules (ProgrammeID, ModuleID, Year) VALUES (?,?,?)")
                 ->execute([$id, $newMid, $year]);
@@ -62,11 +117,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_
     }
 }
 
-/* ── Handle Remove Module from Programme ── */
+/* ── Handle Link Existing Module ── */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'link_module') {
+    $mid  = (int)($_POST['ExistingModuleID'] ?? 0);
+    $year = !empty($_POST['YearLink']) ? (int)$_POST['YearLink'] : null;
+
+    if ($mid) {
+        try {
+            $pdo->prepare("INSERT INTO programmemodules (ProgrammeID, ModuleID, Year) VALUES (?,?,?)")
+                ->execute([$id, $mid, $year]);
+            $msg = 'Existing module linked to programme.';
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) { // Duplicate naturally blocked if constraints exist
+                $msg = 'Module already exists in this programme.';
+            } else {
+                $msg = 'Could not link module: ' . $e->getMessage();
+            }
+            $msgType = 'error';
+        }
+    } else {
+        $msg     = 'Please select a module.';
+        $msgType = 'error';
+    }
+}
+
+/* ── Handle Remove Module Link from Programme ── */
 if (isset($_GET['remove_module'])) {
     $mid = (int)$_GET['remove_module'];
+    // Only delete the link from programmemodules. Do NOT delete the actual module.
     $pdo->prepare("DELETE FROM programmemodules WHERE ProgrammeID=? AND ModuleID=?")->execute([$id, $mid]);
-    $pdo->prepare("DELETE FROM modules WHERE ModuleID=?")->execute([$mid]);
     header("Location: edit_programmes.php?id=$id&msg=module_removed");
     exit;
 }
@@ -89,7 +168,7 @@ if (!$prog) { header("Location: manage_programmes.php"); exit; }
 /* ── Fetch Modules (grouped by year) ── */
 $modStmt = $pdo->prepare("
     SELECT m.ModuleID, m.ModuleName, m.Description, m.IsPublished, pm.Year,
-           s.Name AS LeaderName, s.Title AS LeaderTitle
+           s.Name AS LeaderName
     FROM programmemodules pm
     JOIN modules m ON pm.ModuleID = m.ModuleID
     LEFT JOIN staff s ON m.ModuleLeaderID = s.StaffID
@@ -106,9 +185,14 @@ foreach ($modules as $m) {
 }
 ksort($modulesByYear);
 
+/* ── Fetch Available Modules to Link ── */
+$allMods = $pdo->prepare("SELECT ModuleID, ModuleName FROM modules WHERE ModuleID NOT IN (SELECT ModuleID FROM programmemodules WHERE ProgrammeID = ?) ORDER BY ModuleName");
+$allMods->execute([$id]);
+$availableModules = $allMods->fetchAll(PDO::FETCH_ASSOC);
+
 /* ── Reference Data ── */
 $levels = $pdo->query("SELECT * FROM levels ORDER BY LevelName")->fetchAll(PDO::FETCH_ASSOC);
-$staff  = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
+$staff  = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
 $duration = (int)($prog['Duration'] ?? 3);
 ?>
 
@@ -149,7 +233,7 @@ $duration = (int)($prog['Duration'] ?? 3);
     <div class="admin-section-card__header">
       <h2 class="admin-section-card__title">Programme Details</h2>
     </div>
-    <form method="POST" action="">
+    <form method="POST" action="" enctype="multipart/form-data">
       <input type="hidden" name="_action" value="update_programme">
 
       <div class="form-group">
@@ -187,7 +271,7 @@ $duration = (int)($prog['Duration'] ?? 3);
           <option value="">— Not assigned —</option>
           <?php foreach ($staff as $s): ?>
             <option value="<?= $s['StaffID'] ?>" <?= $prog['ProgrammeLeaderID'] == $s['StaffID'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($s['Title'] . ' ' . $s['Name']) ?>
+              <?= htmlspecialchars($s['Name']) ?>
             </option>
           <?php endforeach; ?>
         </select>
@@ -196,6 +280,23 @@ $duration = (int)($prog['Duration'] ?? 3);
       <div class="form-group">
         <label class="form-label" for="Description">Description</label>
         <textarea class="form-textarea" id="Description" name="Description" rows="5"><?= htmlspecialchars($prog['Description'] ?? '') ?></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="Image">Programme Image</label>
+        <?php if (!empty($prog['Image'])): ?>
+          <div style="margin-bottom:var(--space-3);display:flex;align-items:center;gap:var(--space-4);">
+            <img src="../<?= htmlspecialchars($prog['Image']) ?>" alt="Current programme image" 
+                 style="max-width:200px;max-height:120px;border-radius:var(--radius-md);border:1px solid var(--color-border);">
+            <label style="display:flex;align-items:center;gap:var(--space-2);cursor:pointer;font-size:var(--text-sm);">
+              <input type="checkbox" name="RemoveImage" value="1" 
+                     style="width:18px;height:18px;accent-color:var(--color-danger);">
+              <span>Remove current image</span>
+            </label>
+          </div>
+        <?php endif; ?>
+        <input class="form-input" type="file" id="Image" name="Image" accept="image/jpeg,image/png,image/gif,image/webp">
+        <small class="form-hint">JPG, PNG, GIF, or WebP. Max 5MB. Leave empty to keep current image.</small>
       </div>
 
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:var(--space-2);flex-wrap:wrap;gap:var(--space-4);">
@@ -210,37 +311,71 @@ $duration = (int)($prog['Duration'] ?? 3);
     </form>
   </div>
 
-  <!-- ═══ RIGHT: Add Module ═══ -->
-  <div class="admin-section-card">
-    <div class="admin-section-card__header">
-      <h2 class="admin-section-card__title">Add Module to Programme</h2>
-    </div>
-    <form method="POST" action="">
-      <input type="hidden" name="_action" value="add_module">
+  <!-- ═══ RIGHT: Link or Create Module ═══ -->
+  <div style="display:flex;flex-direction:column;gap:var(--space-6);">
 
-      <div class="form-group">
-        <label class="form-label" for="ModuleName">Module Name <span class="form-required">*</span></label>
-        <input class="form-input" type="text" id="ModuleName" name="ModuleName" required
-               placeholder="e.g. Introduction to Networking">
+    <!-- Link Existing Module -->
+    <div class="admin-section-card">
+      <div class="admin-section-card__header">
+        <h2 class="admin-section-card__title">Link Existing Module</h2>
       </div>
-
-      <div class="form-row">
+      <form method="POST" action="">
+        <input type="hidden" name="_action" value="link_module">
         <div class="form-group">
-          <label class="form-label" for="Year">Year of Study</label>
-          <select class="form-select" id="Year" name="Year">
+          <label class="form-label" for="ExistingModuleID">Select Module <span class="form-required">*</span></label>
+          <select class="form-select" id="ExistingModuleID" name="ExistingModuleID" required <?php if(empty($availableModules)) echo 'disabled'; ?>>
+            <option value="">— <?= empty($availableModules) ? 'No available modules' : 'Select an available module' ?> —</option>
+            <?php foreach ($availableModules as $am): ?>
+              <option value="<?= $am['ModuleID'] ?>"><?= htmlspecialchars($am['ModuleName']) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="YearLink">Year of Study</label>
+          <select class="form-select" id="YearLink" name="YearLink">
             <option value="">— Not specified —</option>
             <?php for ($y = 1; $y <= $duration; $y++): ?>
               <option value="<?= $y ?>">Year <?= $y ?></option>
             <?php endfor; ?>
           </select>
-          <small class="form-hint">Years shown match the programme duration (<?= $duration ?> year<?= $duration !== 1 ? 's' : '' ?>).</small>
         </div>
+        <div style="text-align:right;">
+          <button type="submit" class="btn btn-primary" <?php if(empty($availableModules)) echo 'disabled'; ?>>Link to Programme</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Create New Module -->
+    <div class="admin-section-card">
+      <div class="admin-section-card__header">
+        <h2 class="admin-section-card__title">Create & Add New Module</h2>
+      </div>
+      <form method="POST" action="">
+        <input type="hidden" name="_action" value="add_module">
+
+        <div class="form-group">
+          <label class="form-label" for="ModuleName">Module Name <span class="form-required">*</span></label>
+          <input class="form-input" type="text" id="ModuleName" name="ModuleName" required
+                 placeholder="e.g. Introduction to Networking">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="Year">Year of Study</label>
+            <select class="form-select" id="Year" name="Year">
+              <option value="">— Not specified —</option>
+              <?php for ($y = 1; $y <= $duration; $y++): ?>
+                <option value="<?= $y ?>">Year <?= $y ?></option>
+              <?php endfor; ?>
+            </select>
+            <small class="form-hint">Years shown match the programme duration.</small>
+          </div>
         <div class="form-group">
           <label class="form-label" for="ModuleLeaderID">Module Leader</label>
           <select class="form-select" id="ModuleLeaderID" name="ModuleLeaderID">
             <option value="">— Not assigned —</option>
             <?php foreach ($staff as $s): ?>
-              <option value="<?= $s['StaffID'] ?>"><?= htmlspecialchars($s['Title'] . ' ' . $s['Name']) ?></option>
+              <option value="<?= $s['StaffID'] ?>"><?= htmlspecialchars($s['Name']) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -252,15 +387,16 @@ $duration = (int)($prog['Duration'] ?? 3);
                   placeholder="Briefly describe what this module covers…"></textarea>
       </div>
 
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
-        <label style="display:flex;align-items:center;gap:var(--space-3);cursor:pointer;font-size:var(--text-sm);">
-          <input type="checkbox" name="ModulePublished" id="ModulePublished" value="1" checked
-                 style="width:18px;height:18px;accent-color:var(--color-primary);">
-          <span>Publish immediately</span>
-        </label>
-        <button type="submit" class="btn btn-success">+ Add Module</button>
-      </div>
-    </form>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
+          <label style="display:flex;align-items:center;gap:var(--space-3);cursor:pointer;font-size:var(--text-sm);">
+            <input type="checkbox" name="ModulePublished" id="ModulePublished" value="1" checked
+                   style="width:18px;height:18px;accent-color:var(--color-primary);">
+            <span>Publish immediately</span>
+          </label>
+          <button type="submit" class="btn btn-success">+ Create Module</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -305,7 +441,7 @@ $duration = (int)($prog['Duration'] ?? 3);
                       </div>
                     <?php endif; ?>
                   </td>
-                  <td><?= !empty($m['LeaderName']) ? htmlspecialchars($m['LeaderTitle'] . ' ' . $m['LeaderName']) : '<span style="color:var(--color-text-muted)">—</span>' ?></td>
+                  <td><?= !empty($m['LeaderName']) ? htmlspecialchars($m['LeaderName']) : '<span style="color:var(--color-text-muted)">—</span>' ?></td>
                   <td>
                     <span class="status-badge <?= $m['IsPublished'] ? 'status-badge--published' : 'status-badge--draft' ?>">
                       <?= $m['IsPublished'] ? 'Published' : 'Draft' ?>

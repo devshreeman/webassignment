@@ -10,7 +10,7 @@ include('../includes/header.php');
   <div class="container">
     <span style="display:inline-block;background:rgba(197,169,106,0.2);border:1px solid rgba(197,169,106,0.4);color:#dfc48a;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.25rem 0.75rem;border-radius:9999px;margin-bottom:1rem;">Legal &amp; Compliance</span>
     <h1 style="font-family:'Merriweather',serif;font-size:clamp(1.75rem,4vw,2.5rem);color:#fff;margin-bottom:1rem;">Accessibility Statement</h1>
-    <p style="color:rgba(255,255,255,0.7);max-width:560px;margin:0 auto;">This statement applies to the University of Excellence Student Course Hub website.</p>
+    <p style="color:rgba(255,255,255,0.7);max-width:560px;margin:0 auto;">This statement applies to the Student Course Hub Student Course Hub website.</p>
   </div>
 </section>
 
@@ -24,7 +24,7 @@ include('../includes/header.php');
     <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-8);">
 
       <h2 style="font-size:var(--text-2xl);margin-bottom:var(--space-4);">Our Commitment</h2>
-      <p>The University of Excellence is committed to making its website accessible in accordance with the Public Sector Bodies (Websites and Mobile Applications) Accessibility Regulations 2018. This website aims to comply with the Web Content Accessibility Guidelines (WCAG) 2.1 at Level AA.</p>
+      <p>The Student Course Hub is committed to making its website accessible in accordance with the Public Sector Bodies (Websites and Mobile Applications) Accessibility Regulations 2018. This website aims to comply with the Web Content Accessibility Guidelines (WCAG) 2.1 at Level AA.</p>
 
       <h2 style="font-size:var(--text-xl);margin-top:var(--space-8);margin-bottom:var(--space-4);">Technical Information</h2>
       <p>This website uses the following accessibility features:</p>

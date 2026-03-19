@@ -9,7 +9,7 @@ $events = [
     ['date'=>'12 April 2026',    'weekday'=>'Sunday',    'time'=>'10:00 – 16:00', 'type'=>'Undergraduate Open Day',    'desc'=>'Explore all undergraduate programmes across all departments. Campus tours, lab demonstrations, and Q&amp;A sessions with academic staff.'],
     ['date'=>'14 June 2026',     'weekday'=>'Sunday',    'time'=>'10:00 – 15:00', 'type'=>'Postgraduate Open Evening', 'desc'=>'An evening dedicated to postgraduate study options, including taught and research programmes. Meet course leaders and current students.'],
     ['date'=>'11 October 2026',  'weekday'=>'Sunday',    'time'=>'10:00 – 16:00', 'type'=>'Undergraduate Open Day',    'desc'=>'Second major open day of the academic year — ideal for UCAS applicants targeting 2027 entry.'],
-    ['date'=>'22 November 2026', 'weekday'=>'Sunday',    'time'=>'11:00 – 15:00', 'type'=>'Applicant Visit Day',       'desc'=>'Exclusive event for students who have received an offer from the University of Excellence. Includes department-specific sessions and campus tours.'],
+    ['date'=>'22 November 2026', 'weekday'=>'Sunday',    'time'=>'11:00 – 15:00', 'type'=>'Applicant Visit Day',       'desc'=>'Exclusive event for students who have received an offer from the Student Course Hub. Includes department-specific sessions and campus tours.'],
 ];
 ?>
 
@@ -17,7 +17,7 @@ $events = [
   <div class="container">
     <span style="display:inline-block;background:rgba(197,169,106,0.2);border:1px solid rgba(197,169,106,0.4);color:#dfc48a;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.25rem 0.75rem;border-radius:9999px;margin-bottom:1rem;">Events &amp; Visits</span>
     <h1 style="font-family:'Merriweather',serif;font-size:clamp(1.75rem,4vw,2.5rem);color:#fff;margin-bottom:1rem;">Open Days</h1>
-    <p style="color:rgba(255,255,255,0.7);max-width:520px;margin:0 auto;font-size:1.05rem;">Visit our campus, meet our academic staff, and explore life at the University of Excellence.</p>
+    <p style="color:rgba(255,255,255,0.7);max-width:520px;margin:0 auto;font-size:1.05rem;">Visit our campus, meet our academic staff, and explore life at the Student Course Hub.</p>
   </div>
 </section>
 

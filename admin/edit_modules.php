@@ -13,15 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name     = trim($_POST['ModuleName']);
     $desc     = trim($_POST['Description']);
     $leaderId = !empty($_POST['ModuleLeaderID']) ? (int)$_POST['ModuleLeaderID'] : null;
-    $year     = !empty($_POST['Year']) ? (int)$_POST['Year'] : null;
-    $pub      = isset($_POST['IsPublished']) ? 1 : 0;
-
     $pdo->prepare("UPDATE modules SET ModuleName=?, Description=?, ModuleLeaderID=?, IsPublished=? WHERE ModuleID=?")
         ->execute([$name, $desc, $leaderId, $pub, $id]);
-
-    // Update year in programmemodules
-    $pdo->prepare("UPDATE programmemodules SET Year=? WHERE ModuleID=?")
-        ->execute([$year, $id]);
 
     $msg = 'Module updated.';
 }
@@ -35,7 +28,7 @@ $mod  = $pdo->prepare("
 ");
 $mod->execute([$id]);
 $mod   = $mod->fetch(PDO::FETCH_ASSOC);
-$staff = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
+$staff = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="admin-topbar">
@@ -67,22 +60,13 @@ $staff = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name")->fe
           <option value="">None</option>
           <?php foreach ($staff as $s): ?>
             <option value="<?= $s['StaffID'] ?>" <?= $mod['ModuleLeaderID'] == $s['StaffID'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($s['Title'] . ' ' . $s['Name']) ?>
+              <?= htmlspecialchars($s['Name']) ?>
             </option>
           <?php endforeach; ?>
         </select>
       </div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label" for="Year">Year of Study</label>
-        <select class="form-select" id="Year" name="Year">
-          <option value="">Not specified</option>
-          <?php for ($y = 1; $y <= 4; $y++): ?>
-            <option value="<?= $y ?>" <?= $mod['Year'] == $y ? 'selected' : '' ?>>Year <?= $y ?></option>
-          <?php endfor; ?>
-        </select>
-      </div>
       <div class="form-group" style="display:flex;align-items:flex-end;">
         <label style="display:flex;align-items:center;gap:var(--space-3);cursor:pointer;font-size:var(--text-sm);">
           <input type="checkbox" name="IsPublished" value="1" <?= $mod['IsPublished'] ? 'checked' : '' ?>

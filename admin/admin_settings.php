@@ -132,7 +132,7 @@ $admins = $pdo->query("SELECT AdminID, name, email, created_at FROM admin ORDER 
       <div>
         <div style="font-weight:700;font-size:var(--text-lg);color:var(--color-primary);"><?= htmlspecialchars($me['name'] ?: 'Administrator') ?></div>
         <div style="font-size:var(--text-sm);color:var(--color-text-muted);"><?= htmlspecialchars($me['email']) ?></div>
-        <div style="font-size:var(--text-xs);color:var(--color-text-light);margin-top:2px;">Administrator · University of Excellence</div>
+        <div style="font-size:var(--text-xs);color:var(--color-text-light);margin-top:2px;">Administrator · Student Course Hub</div>
       </div>
     </div>
     <form method="POST" action="">

@@ -9,17 +9,36 @@ $msgType = 'success';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name  = trim($_POST['Name']);
-    $title = trim($_POST['Title']);
     $email = trim($_POST['Email']);
     $bio   = trim($_POST['Bio']);
-    $photo = trim($_POST['Photo']);
+    $pass  = trim($_POST['Password'] ?? '');
+    
+    // Handle File Upload
+    $photoPath = '';
+    if (isset($_FILES['Photo']) && $_FILES['Photo']['error'] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES['Photo']['tmp_name'];
+        $fileName = $_FILES['Photo']['name'];
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $newFileName = 'staff_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $fileExtension;
+        $destPath = '../uploads/' . $newFileName;
+        
+        if (move_uploaded_file($fileTmpPath, $destPath)) {
+            $photoPath = 'uploads/' . $newFileName;
+        }
+    }
 
-    if ($name && $title && $email) {
-        $stmt = $pdo->prepare("INSERT INTO staff (Name, Title, Email, Bio, Photo) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $title, $email, $bio, $photo]);
-        $msg = 'Staff member added successfully.';
+    if ($name && $email) {
+        try {
+            $hash = $pass ? password_hash($pass, PASSWORD_DEFAULT) : null;
+            $stmt = $pdo->prepare("INSERT INTO staff (Name, Email, Bio, Photo, password) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$name, $email, $bio, $photoPath, $hash]);
+            $msg = 'Staff member added successfully.';
+        } catch (PDOException $e) {
+            $msg     = 'Database error: ' . $e->getMessage();
+            $msgType = 'error';
+        }
     } else {
-        $msg     = 'Name, title and email are required.';
+        $msg     = 'Name and email are required.';
         $msgType = 'error';
     }
 }
@@ -55,30 +74,34 @@ $staffList = $pdo->query("
   <div class="admin-section-card__header">
     <h2 class="admin-section-card__title">Add New Staff Member</h2>
   </div>
-  <form method="POST" action="">
+  <form method="POST" action="" enctype="multipart/form-data">
     <div class="form-row">
       <div class="form-group">
         <label class="form-label" for="Name">Full Name <span class="form-required">*</span></label>
         <input class="form-input" type="text" id="Name" name="Name" required placeholder="e.g. Sarah Johnson">
       </div>
       <div class="form-group">
-        <label class="form-label" for="Title">Title / Role <span class="form-required">*</span></label>
-        <input class="form-input" type="text" id="Title" name="Title" required placeholder="e.g. Dr, Prof, Mr, Ms">
+        <label class="form-label" for="StaffEmail">Email <span class="form-required">*</span></label>
+        <input class="form-input" type="email" id="StaffEmail" name="Email" required placeholder="s.johnson@university.ac.uk">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label" for="StaffEmail">Email <span class="form-required">*</span></label>
-        <input class="form-input" type="email" id="StaffEmail" name="Email" required placeholder="s.johnson@university.ac.uk">
+        <label class="form-label" for="Photo">Staff Photo</label>
+        <input class="form-input" type="file" id="Photo" name="Photo" accept="image/*">
+        <p class="form-hint">Upload a professional headshot (JPG, PNG).</p>
       </div>
       <div class="form-group">
-        <label class="form-label" for="Photo">Photo URL</label>
-        <input class="form-input" type="url" id="Photo" name="Photo" placeholder="https://…">
+        <label class="form-label" for="Password">Set Password (Optional)</label>
+        <input class="form-input" type="password" id="Password" name="Password" placeholder="••••••••">
+        <p class="form-hint">If set, the staff member can use this to sign into the Staff Portal.</p>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="Bio">Biography</label>
-      <textarea class="form-textarea" id="Bio" name="Bio" rows="3" placeholder="Brief biography and research areas…"></textarea>
+    <div class="form-row">
+      <div class="form-group" style="flex:1;">
+        <label class="form-label" for="Bio">Biography</label>
+        <textarea class="form-textarea" id="Bio" name="Bio" rows="3" placeholder="Brief biography and research areas…"></textarea>
+      </div>
     </div>
     <button type="submit" class="btn btn-primary">Add Staff Member</button>
   </form>
@@ -94,7 +117,6 @@ $staffList = $pdo->query("
       <thead>
         <tr>
           <th scope="col">Name</th>
-          <th scope="col">Title</th>
           <th scope="col">Email</th>
           <th scope="col">Modules Leading</th>
           <th scope="col">Actions</th>
@@ -108,7 +130,7 @@ $staffList = $pdo->query("
                 <div style="display:flex;align-items:center;gap:var(--space-3);">
                   <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--color-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--color-accent);">
                     <?php if (!empty($s['Photo'])): ?>
-                      <img src="<?= htmlspecialchars($s['Photo']) ?>" alt="" style="width:100%;height:100%;object-fit:cover;">
+                      <img src="<?= '../' . htmlspecialchars($s['Photo']) ?>" alt="" style="width:100%;height:100%;object-fit:cover;">
                     <?php else: ?>
                       <?= strtoupper(substr($s['Name'], 0, 2)) ?>
                     <?php endif; ?>
@@ -116,7 +138,6 @@ $staffList = $pdo->query("
                   <strong><?= htmlspecialchars($s['Name']) ?></strong>
                 </div>
               </td>
-              <td><?= htmlspecialchars($s['Title']) ?></td>
               <td><a href="mailto:<?= htmlspecialchars($s['Email']) ?>"><?= htmlspecialchars($s['Email']) ?></a></td>
               <td><?= $s['ModuleCount'] ?></td>
               <td>

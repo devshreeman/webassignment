@@ -13,24 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'add') {
         $name     = trim($_POST['ModuleName']);
         $desc     = trim($_POST['Description']);
-        $progId   = (int)$_POST['ProgrammeID'];
-        $year     = (int)$_POST['Year'];
         $leaderId = !empty($_POST['ModuleLeaderID']) ? (int)$_POST['ModuleLeaderID'] : null;
-        $staffId  = !empty($_POST['StaffID'])        ? (int)$_POST['StaffID']        : 1;
         $pub      = isset($_POST['IsPublished']) ? 1 : 0;
 
-        if ($name && $progId) {
-            $pdo->beginTransaction();
-            $stmtM = $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID, StaffID, ProgrammeID, IsPublished) VALUES (?,?,?,?,?,?)");
-            $stmtM->execute([$name, $desc, $leaderId, $staffId, $progId, $pub]);
-            $newModuleId = $pdo->lastInsertId();
-
-            $stmtPM = $pdo->prepare("INSERT INTO programmemodules (ProgrammeID, ModuleID, Year) VALUES (?,?,?)");
-            $stmtPM->execute([$progId, $newModuleId, $year ?: null]);
-            $pdo->commit();
-            $msg = 'Module added and linked to programme.';
+        if ($name) {
+            $stmtM = $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID, IsPublished) VALUES (?,?,?,?)");
+            $stmtM->execute([$name, $desc, $leaderId, $pub]);
+            $msg = 'Module created successfully. (Link to programmes via their Edit pages).';
         } else {
-            $msg     = 'Please fill in all required fields.';
+            $msg     = 'Module name is required.';
             $msgType = 'error';
         }
     } elseif ($action === 'toggle') {
@@ -43,22 +34,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if (isset($_GET['delete'])) {
     $mid = (int)$_GET['delete'];
-    $pdo->prepare("DELETE FROM modules WHERE ModuleID = ?")->execute([$mid]);
-    $msg = 'Module deleted.';
+    try {
+        // First delete related records in programmemodules
+        $pdo->prepare("DELETE FROM programmemodules WHERE ModuleID = ?")->execute([$mid]);
+        // Then delete the module
+        $pdo->prepare("DELETE FROM modules WHERE ModuleID = ?")->execute([$mid]);
+        $msg = 'Module deleted successfully.';
+    } catch (PDOException $e) {
+        $msg = 'Error deleting module: ' . $e->getMessage();
+        $msgType = 'error';
+    }
 }
 
 $modules = $pdo->query("
-    SELECT m.*, s.Name AS LeaderName, p.ProgrammeName, pm.Year
+    SELECT m.*, s.Name AS LeaderName, 
+           GROUP_CONCAT(DISTINCT p.ProgrammeName SEPARATOR ', ') AS ProgrammeName,
+           MIN(pm.Year) AS Year
     FROM modules m
     LEFT JOIN staff s ON m.ModuleLeaderID = s.StaffID
-    LEFT JOIN programmes p ON m.ProgrammeID = p.ProgrammeID
-    LEFT JOIN programmemodules pm ON pm.ModuleID = m.ModuleID AND pm.ProgrammeID = m.ProgrammeID
+    LEFT JOIN programmemodules pm ON pm.ModuleID = m.ModuleID
+    LEFT JOIN programmes p ON pm.ProgrammeID = p.ProgrammeID
     GROUP BY m.ModuleID
-    ORDER BY p.ProgrammeName, pm.Year, m.ModuleName
+    ORDER BY m.ModuleName
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 $programmes = $pdo->query("SELECT ProgrammeID, ProgrammeName FROM programmes ORDER BY ProgrammeName")->fetchAll(PDO::FETCH_ASSOC);
-$staff      = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
+$staff      = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="admin-topbar">
@@ -80,38 +81,17 @@ $staff      = $pdo->query("SELECT StaffID, Title, Name FROM staff ORDER BY Name"
   <form method="POST" action="">
     <input type="hidden" name="_action" value="add">
     <div class="form-row">
-      <div class="form-group">
+      <div class="form-group" style="flex:1;">
         <label class="form-label" for="ModuleName">Module Name <span class="form-required">*</span></label>
         <input class="form-input" type="text" id="ModuleName" name="ModuleName" required placeholder="e.g. Algorithms and Data Structures">
       </div>
-      <div class="form-group">
-        <label class="form-label" for="ProgrammeID">Programme <span class="form-required">*</span></label>
-        <select class="form-select" id="ProgrammeID" name="ProgrammeID" required>
-          <option value="">Select programme…</option>
-          <?php foreach ($programmes as $p): ?>
-            <option value="<?= $p['ProgrammeID'] ?>"><?= htmlspecialchars($p['ProgrammeName']) ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
+      <div class="form-group" style="flex:1;">
         <label class="form-label" for="ModuleLeaderID">Module Leader</label>
         <select class="form-select" id="ModuleLeaderID" name="ModuleLeaderID">
           <option value="">None assigned</option>
           <?php foreach ($staff as $s): ?>
-            <option value="<?= $s['StaffID'] ?>"><?= htmlspecialchars($s['Title'] . ' ' . $s['Name']) ?></option>
+            <option value="<?= $s['StaffID'] ?>"><?= htmlspecialchars($s['Name']) ?></option>
           <?php endforeach; ?>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="Year">Year of Study</label>
-        <select class="form-select" id="Year" name="Year">
-          <option value="">Not specified</option>
-          <option value="1">Year 1</option>
-          <option value="2">Year 2</option>
-          <option value="3">Year 3</option>
-          <option value="4">Year 4</option>
         </select>
       </div>
     </div>

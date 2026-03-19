@@ -17,7 +17,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $staffId = (int) $_GET['id'];
 
 // --- Check if staff exists ---
-$stmt = $pdo->prepare("SELECT * FROM Staff WHERE StaffID = ?");
+$stmt = $pdo->prepare("SELECT * FROM staff WHERE StaffID = ?");
 $stmt->execute([$staffId]);
 $staff = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -26,10 +26,27 @@ if (!$staff) {
     exit;
 }
 
-// --- Delete the staff record ---
-$delete = $pdo->prepare("DELETE FROM Staff WHERE StaffID = ?");
-$delete->execute([$staffId]);
-
-header("Location: manage_staff.php?msg=Staff+deleted+successfully");
+try {
+    // --- Check if staff is referenced in programmes or modules ---
+    $progCount = $pdo->prepare("SELECT COUNT(*) FROM programmes WHERE ProgrammeLeaderID = ?");
+    $progCount->execute([$staffId]);
+    $progRefs = $progCount->fetchColumn();
+    
+    $modCount = $pdo->prepare("SELECT COUNT(*) FROM modules WHERE ModuleLeaderID = ?");
+    $modCount->execute([$staffId]);
+    $modRefs = $modCount->fetchColumn();
+    
+    if ($progRefs > 0 || $modRefs > 0) {
+        header("Location: manage_staff.php?msg=Cannot+delete+staff+member+who+is+assigned+as+programme+or+module+leader");
+        exit;
+    }
+    
+    // --- Delete the staff record ---
+    $pdo->prepare("DELETE FROM staff WHERE StaffID = ?")->execute([$staffId]);
+    
+    header("Location: manage_staff.php?msg=Staff+deleted+successfully");
+} catch (PDOException $e) {
+    header("Location: manage_staff.php?msg=Error+deleting+staff");
+}
 exit;
 ?>

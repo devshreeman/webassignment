@@ -7,30 +7,61 @@ include('../includes/admin_header.php');
 $id = (int)($_GET['id'] ?? 0);
 if (!$id) { header("Location: manage_staff.php"); exit; }
 
+$s = $pdo->prepare("SELECT * FROM staff WHERE StaffID = ?");
+$s->execute([$id]);
+$staffMember = $s->fetch(PDO::FETCH_ASSOC);
+if (!$staffMember) { header("Location: manage_staff.php"); exit; }
+
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name  = trim($_POST['Name']);
-    $title = trim($_POST['Title']);
     $email = trim($_POST['Email']);
     $bio   = trim($_POST['Bio']);
-    $photo = trim($_POST['Photo']);
+    $pass  = trim($_POST['Password'] ?? '');
 
-    $pdo->prepare("UPDATE staff SET Name=?, Title=?, Email=?, Bio=?, Photo=? WHERE StaffID=?")
-        ->execute([$name, $title, $email, $bio, $photo, $id]);
-    $msg = 'Staff member updated.';
+    // Handle File Upload
+    $photoPath = $staffMember['Photo'] ?? '';
+    if (isset($_FILES['Photo']) && $_FILES['Photo']['error'] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES['Photo']['tmp_name'];
+        $fileName = $_FILES['Photo']['name'];
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $newFileName = 'staff_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $fileExtension;
+        $destPath = '../uploads/' . $newFileName;
+        
+        if (move_uploaded_file($fileTmpPath, $destPath)) {
+            $photoPath = 'uploads/' . $newFileName;
+        }
+    }
+
+    try {
+        if ($pass) {
+            $hash = password_hash($pass, PASSWORD_DEFAULT);
+            $pdo->prepare("UPDATE staff SET Name=?, Email=?, Bio=?, Photo=?, password=? WHERE StaffID=?")
+                ->execute([$name, $email, $bio, $photoPath, $hash, $id]);
+        } else {
+            $pdo->prepare("UPDATE staff SET Name=?, Email=?, Bio=?, Photo=? WHERE StaffID=?")
+                ->execute([$name, $email, $bio, $photoPath, $id]);
+        }
+        $msg = 'Staff member updated.';
+        // Refresh local data
+        $s->execute([$id]);
+        $staffMember = $s->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        $msg = 'Database error: ' . $e->getMessage();
+    }
 }
 
-$s = $pdo->prepare("SELECT * FROM staff WHERE StaffID = ?");
-$s->execute([$id]);
-$staffMember = $s->fetch(PDO::FETCH_ASSOC);
+// Re-fetch staff member data to refresh the form variables is done on line 44.
 
 // Modules they lead
 $led = $pdo->prepare("
     SELECT m.ModuleName, p.ProgrammeName
     FROM modules m
-    LEFT JOIN programmes p ON m.ProgrammeID = p.ProgrammeID
+    LEFT JOIN programmemodules pm ON m.ModuleID = pm.ModuleID
+    LEFT JOIN programmes p ON pm.ProgrammeID = p.ProgrammeID
     WHERE m.ModuleLeaderID = ?
+    GROUP BY m.ModuleID
     ORDER BY m.ModuleName
 ");
 $led->execute([$id]);
@@ -55,30 +86,38 @@ $ledModules = $led->fetchAll(PDO::FETCH_ASSOC);
 
 <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-6);">
   <div class="admin-section-card">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="Name">Full Name <span class="form-required">*</span></label>
           <input class="form-input" type="text" id="Name" name="Name" required value="<?= htmlspecialchars($staffMember['Name']) ?>">
         </div>
         <div class="form-group">
-          <label class="form-label" for="Title">Title <span class="form-required">*</span></label>
-          <input class="form-input" type="text" id="Title" name="Title" required value="<?= htmlspecialchars($staffMember['Title']) ?>">
+          <label class="form-label" for="StaffEmail">Email <span class="form-required">*</span></label>
+          <input class="form-input" type="email" id="StaffEmail" name="Email" required value="<?= htmlspecialchars($staffMember['Email']) ?>">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" for="StaffEmail">Email <span class="form-required">*</span></label>
-          <input class="form-input" type="email" id="StaffEmail" name="Email" required value="<?= htmlspecialchars($staffMember['Email']) ?>">
+          <label class="form-label" for="Photo">Update Photo</label>
+          <input class="form-input" type="file" id="Photo" name="Photo" accept="image/*">
+          <?php if (!empty($staffMember['Photo'])): ?>
+            <p class="form-hint" style="margin-top:0.5rem;display:flex;align-items:center;gap:0.5rem;">
+              Current: <img src="../<?= htmlspecialchars($staffMember['Photo']) ?>" alt="" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">
+            </p>
+          <?php endif; ?>
         </div>
         <div class="form-group">
-          <label class="form-label" for="Photo">Photo URL</label>
-          <input class="form-input" type="url" id="Photo" name="Photo" value="<?= htmlspecialchars($staffMember['Photo'] ?? '') ?>">
+          <label class="form-label" for="Password">Reset Password (Optional)</label>
+          <input class="form-input" type="password" id="Password" name="Password" placeholder="Enter new password to reset">
+          <p class="form-hint">Leave blank to keep current.</p>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label" for="Bio">Biography</label>
-        <textarea class="form-textarea" id="Bio" name="Bio" rows="5"><?= htmlspecialchars($staffMember['Bio'] ?? '') ?></textarea>
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label class="form-label" for="Bio">Biography</label>
+          <textarea class="form-textarea" id="Bio" name="Bio" rows="5"><?= htmlspecialchars($staffMember['Bio'] ?? '') ?></textarea>
+        </div>
       </div>
       <div style="display:flex;gap:var(--space-4);">
         <button type="submit" class="btn btn-primary">Save Changes</button>

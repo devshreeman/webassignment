@@ -41,7 +41,7 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $programmes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Stats for hero badges
+// Stats for hero
 $totalProgrammes = $pdo->query("SELECT COUNT(*) FROM programmes WHERE IsPublished = 1")->fetchColumn();
 $totalModules    = $pdo->query("SELECT COUNT(*) FROM modules WHERE IsPublished = 1")->fetchColumn();
 
@@ -49,7 +49,7 @@ $totalModules    = $pdo->query("SELECT COUNT(*) FROM modules WHERE IsPublished =
 function getProgrammeImage($prog) {
     $name  = strtolower($prog['ProgrammeName']);
     $image = $prog['Image'] ?? '';
-    if (!empty($image)) return htmlspecialchars($image);
+    if (!empty($image)) return htmlspecialchars('../' . $image);
     if (str_contains($name, 'artificial intelligence') || str_contains($name, 'ai'))
         return 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80';
     if (str_contains($name, 'cyber'))
@@ -72,7 +72,6 @@ include('../includes/header.php');
 <section class="hero">
   <div class="hero__inner">
     <div class="hero__content">
-      <span class="hero__kicker">University of Excellence — 2025 Open Enrolment</span>
       <h1 class="hero__title">
         Discover Your<br><em>Perfect Programme</em>
       </h1>
@@ -86,22 +85,8 @@ include('../includes/header.php');
     </div>
     <div class="hero__visual" aria-hidden="true">
       <div class="hero__image-wrapper">
-        <img src="https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
              alt="University campus" loading="lazy">
-      </div>
-      <div class="hero__stat-badge hero__stat-badge--1">
-        <svg style="width:28px;height:28px;color:#C5A96A;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        <div>
-          <strong><?= $totalProgrammes ?>+</strong>
-          <span>Programmes</span>
-        </div>
-      </div>
-      <div class="hero__stat-badge hero__stat-badge--2">
-        <svg style="width:28px;height:28px;color:#059669;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        <div>
-          <strong><?= $totalModules ?>+</strong>
-          <span>Modules</span>
-        </div>
       </div>
     </div>
   </div>
@@ -226,7 +211,7 @@ include('../includes/header.php');
         <p class="interest-cta__description">
           Register your interest in any of our programmes to receive updates about open days, application deadlines, and exclusive events.
         </p>
-        <a href="index.php" class="btn btn-primary btn-lg">Browse &amp; Register Interest</a>
+        <a href="#programmes-section" class="btn btn-primary btn-lg">Browse All Programmes</a>
       </div>
     </div>
   </div>

@@ -1,12 +1,12 @@
 <?php
 include('../config/db.php');
 
-$pageTitle         = 'Admin Login';
-$activeSidebarItem = '';
+$pageTitle         = 'Staff Login';
+$activePage        = 'staff-login';
 
 // Redirect if already logged in
 if (session_status() === PHP_SESSION_NONE) session_start();
-if (isset($_SESSION['admin'])) {
+if (isset($_SESSION['staff'])) {
     header("Location: dashboard.php");
     exit;
 }
@@ -19,17 +19,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         $errors[] = 'Please enter both email and password.';
     } else {
-        // Query against the `admin` table
-        $stmt = $pdo->prepare("SELECT * FROM admin WHERE email = ?");
+        // Query against the `staff` table
+        $stmt = $pdo->prepare("SELECT * FROM staff WHERE Email = ?");
         $stmt->execute([$email]);
-        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+        $staff = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($admin && password_verify($password, $admin['password'])) {
-            $_SESSION['admin'] = $admin;
+        // We check if staff exists, has a password, and if password verifies
+        if ($staff && !empty($staff['password']) && password_verify($password, $staff['password'])) {
+            $_SESSION['staff'] = [
+                'StaffID' => $staff['StaffID'],
+                'Name'    => $staff['Name'],
+                'Email'   => $staff['Email']
+            ];
             header("Location: dashboard.php");
             exit;
         } else {
-            $errors[] = 'Invalid email address or password.';
+            $errors[] = 'Invalid email address or password. (Note: If you are new, an admin must set your password first).';
         }
     }
 }
@@ -39,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login | Student Course Hub</title>
+  <title>Staff Login | Student Course Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="../css/university.css">
@@ -53,12 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="auth-card__logo-mark" aria-hidden="true">SCH</div>
       <div>
         <div style="font-family:'Merriweather',serif;font-size:1.15rem;font-weight:700;color:var(--color-primary);">Student Course Hub</div>
-        <div style="font-size:0.7rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Administration Panel</div>
+        <div style="font-size:0.7rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Staff Portal</div>
       </div>
     </div>
 
-    <h1 class="auth-card__title">Administrator Sign In</h1>
-    <p class="auth-card__subtitle">Restricted access. Authorised personnel only.</p>
+    <h1 class="auth-card__title">Staff Sign In</h1>
+    <p class="auth-card__subtitle">Access your modules and teaching schedule.</p>
 
     <?php if ($errors): ?>
       <div class="alert alert--error" role="alert">
@@ -77,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           id="email"
           name="email"
           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
-          placeholder="admin@university.ac.uk"
+          placeholder="s.johnson@university.ac.uk"
           required
           aria-required="true"
           autocomplete="email"
@@ -99,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:var(--space-2);">
-        Sign In to Admin Panel
+        Sign In to Staff Portal
       </button>
     </form>
 

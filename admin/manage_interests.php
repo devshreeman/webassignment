@@ -1,18 +1,5 @@
 <?php
 include('../config/db.php');
-$pageTitle         = 'Student Interest Registrations';
-$activeSidebarItem = 'interests';
-include('../includes/admin_header.php');
-
-$msg = '';
-
-// Delete single interest
-if (isset($_GET['delete'])) {
-    $iid = (int)$_GET['delete'];
-    $pdo->prepare("DELETE FROM interestedstudents WHERE InterestID = ?")->execute([$iid]);
-    $msg = 'Registration removed.';
-}
-
 // Filter by programme
 $filterProg = isset($_GET['prog']) ? (int)$_GET['prog'] : 0;
 
@@ -47,6 +34,19 @@ if (isset($_GET['export'])) {
     }
     fclose($out);
     exit;
+}
+
+$pageTitle         = 'Student Interest Registrations';
+$activeSidebarItem = 'interests';
+include('../includes/admin_header.php');
+
+$msg = '';
+
+// Delete single interest
+if (isset($_GET['delete'])) {
+    $iid = (int)$_GET['delete'];
+    $pdo->prepare("DELETE FROM interestedstudents WHERE InterestID = ?")->execute([$iid]);
+    $msg = 'Registration removed.';
 }
 ?>
 

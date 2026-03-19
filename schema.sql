@@ -71,8 +71,6 @@ CREATE TABLE `modules` (
   `ModuleLeaderID` int(11) DEFAULT NULL,
   `Description` text DEFAULT NULL,
   `Image` text DEFAULT NULL,
-  `ProgrammeID` int(11) NOT NULL,
-  `StaffID` int(11) NOT NULL,
   `IsPublished` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -100,6 +98,7 @@ CREATE TABLE `programmes` (
   `ProgrammeName` text NOT NULL,
   `LevelID` int(11) DEFAULT NULL,
   `ProgrammeLeaderID` int(11) DEFAULT NULL,
+  `Duration` int(11) DEFAULT NULL,
   `Description` text DEFAULT NULL,
   `Image` text DEFAULT NULL,
   `IsPublished` tinyint(100) NOT NULL
@@ -114,25 +113,9 @@ CREATE TABLE `programmes` (
 CREATE TABLE `staff` (
   `StaffID` int(11) NOT NULL,
   `Name` text NOT NULL,
-  `Title` varchar(50) NOT NULL,
   `Email` varchar(150) NOT NULL,
   `Bio` text NOT NULL,
   `Photo` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `id` int(5) NOT NULL,
-  `email` varchar(150) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `password` varchar(100) NOT NULL,
-  `date` timestamp(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
-  `role` enum('admin','user') DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -190,13 +173,6 @@ ALTER TABLE `staff`
   ADD PRIMARY KEY (`StaffID`);
 
 --
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -225,10 +201,17 @@ ALTER TABLE `programmes`
   MODIFY `ProgrammeID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT for table `staff`
 --
-ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `staff`
+  MODIFY `StaffID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `modules`
+--
+ALTER TABLE `modules`
+  MODIFY `ModuleID` int(11) NOT NULL AUTO_INCREMENT;
+
 
 --
 -- Constraints for dumped tables
