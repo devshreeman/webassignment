@@ -17,9 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pub      = isset($_POST['IsPublished']) ? 1 : 0;
 
         if ($name) {
-            $stmtM = $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID, IsPublished) VALUES (?,?,?,?)");
-            $stmtM->execute([$name, $desc, $leaderId, $pub]);
-            $msg = 'Module created successfully. (Link to programmes via their Edit pages).';
+            try {
+                $stmtM = $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID, IsPublished) VALUES (?,?,?,?)");
+                $stmtM->execute([$name, $desc, $leaderId, $pub]);
+                $msg = 'Module created successfully.';
+            } catch (PDOException $e) {
+                $msg = 'Failed to create module. Please try again.';
+                $msgType = 'error';
+            }
         } else {
             $msg     = 'Module name is required.';
             $msgType = 'error';
@@ -36,12 +41,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['delete'])) {
     $mid = (int)$_GET['delete'];
     try {
-        /* Delete module associations first */
         $pdo->prepare("DELETE FROM programmemodules WHERE ModuleID = ?")->execute([$mid]);
         $pdo->prepare("DELETE FROM modules WHERE ModuleID = ?")->execute([$mid]);
         $msg = 'Module deleted successfully.';
     } catch (PDOException $e) {
-        $msg = 'Error deleting module: ' . $e->getMessage();
+        $msg = 'Failed to delete module. Please try again.';
         $msgType = 'error';
     }
 }

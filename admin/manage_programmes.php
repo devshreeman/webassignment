@@ -58,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$name, $desc, $level, $leader, $duration, $image, $pub]);
                 $newId = $pdo->lastInsertId();
                 
-                /* Redirect to edit page */
                 while (ob_get_level()) {
                     ob_end_clean();
                 }
@@ -66,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("Location: edit_programmes.php?id=$newId&msg=created");
                 exit();
             } catch (PDOException $e) {
-                $msg     = 'Database error: ' . $e->getMessage();
+                $msg     = 'Failed to create programme. Please try again.';
                 $msgType = 'error';
             }
         } elseif (!$name || !$level) {
@@ -85,12 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['delete'])) {
     $pid = (int)$_GET['delete'];
     try {
-        /* Delete Related Records First */
         $pdo->prepare("DELETE FROM programmemodules WHERE ProgrammeID = ?")->execute([$pid]);
         $pdo->prepare("DELETE FROM programmes WHERE ProgrammeID = ?")->execute([$pid]);
         $msg = 'Programme deleted successfully.';
     } catch (PDOException $e) {
-        $msg = 'Error deleting programme: ' . $e->getMessage();
+        $msg = 'Failed to delete programme. Please try again.';
         $msgType = 'error';
     }
 }

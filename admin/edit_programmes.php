@@ -2,10 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-/**
- * Unified Programme Editor — details + modules on one page.
- * URL: edit_programmes.php?id=N
- */
+ob_start();
+
 include('../config/db.php');
 $pageTitle         = 'Edit Programme';
 $activeSidebarItem = 'programmes';
@@ -147,13 +145,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'link
     }
 }
 
-/* ── Handle Remove Module Link from Programme ── */
 /* Handle Module Removal from Programme */
 if (isset($_GET['remove_module'])) {
     $mid = (int)$_GET['remove_module'];
-    $pdo->prepare("DELETE FROM programmemodules WHERE ProgrammeID=? AND ModuleID=?")->execute([$id, $mid]);
-    header("Location: edit_programmes.php?id=$id&msg=module_removed");
-    exit;
+    try {
+        $pdo->prepare("DELETE FROM programmemodules WHERE ProgrammeID=? AND ModuleID=?")->execute([$id, $mid]);
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        header("Location: edit_programmes.php?id=$id&msg=module_removed");
+        exit;
+    } catch (PDOException $e) {
+        $msg = 'Failed to remove module. Please try again.';
+        $msgType = 'error';
+    }
 }
 
 if (isset($_GET['msg'])) {
@@ -458,7 +463,7 @@ $duration = (int)($prog['Duration'] ?? 3);
                       <a href="edit_modules.php?id=<?= $m['ModuleID'] ?>" class="btn btn-primary btn-sm">Edit</a>
                       <a href="edit_programmes.php?id=<?= $id ?>&remove_module=<?= $m['ModuleID'] ?>"
                          class="btn btn-danger btn-sm"
-                         data-confirm="Remove '<?= htmlspecialchars(addslashes($m['ModuleName'])) ?>' from this programme? The module will also be deleted.">
+                         data-confirm="Remove '<?= htmlspecialchars(addslashes($m['ModuleName'])) ?>' from this programme? The module itself will remain in the system.">
                         Remove
                       </a>
                     </div>

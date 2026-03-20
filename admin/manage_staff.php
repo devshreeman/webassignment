@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$name, $email, $bio, $photoPath, $hash]);
             $msg = 'Staff member added successfully.';
         } catch (PDOException $e) {
-            $msg     = 'Database error: ' . $e->getMessage();
+            $msg     = 'Failed to add staff member. Please try again.';
             $msgType = 'error';
         }
     } else {
@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['delete'])) {
     $sid = (int)$_GET['delete'];
     try {
-        /* Check if staff is referenced */
         $progCount = $pdo->prepare("SELECT COUNT(*) FROM programmes WHERE ProgrammeLeaderID = ?");
         $progCount->execute([$sid]);
         $progRefs = $progCount->fetchColumn();
@@ -64,7 +63,7 @@ if (isset($_GET['delete'])) {
             $msg = 'Staff member removed successfully.';
         }
     } catch (PDOException $e) {
-        $msg = 'Error deleting staff member: ' . $e->getMessage();
+        $msg = 'Failed to delete staff member. Please try again.';
         $msgType = 'error';
     }
 }

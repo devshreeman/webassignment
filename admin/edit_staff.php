@@ -13,6 +13,7 @@ $staffMember = $s->fetch(PDO::FETCH_ASSOC);
 if (!$staffMember) { header("Location: manage_staff.php"); exit; }
 
 $msg = '';
+$msgType = 'success';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name  = trim($_POST['Name']);
@@ -43,12 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare("UPDATE staff SET Name=?, Email=?, Bio=?, Photo=? WHERE StaffID=?")
                 ->execute([$name, $email, $bio, $photoPath, $id]);
         }
-        $msg = 'Staff member updated.';
-        /* Refresh data after update */
+        $msg = 'Staff member updated successfully.';
+        $msgType = 'success';
         $s->execute([$id]);
         $staffMember = $s->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        $msg = 'Database error: ' . $e->getMessage();
+        $msg = 'Failed to update staff member. Please try again.';
+        $msgType = 'error';
     }
 }
 
@@ -79,7 +81,7 @@ $ledModules = $led->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <?php if ($msg): ?>
-  <div class="alert alert--success" role="alert"><?= htmlspecialchars($msg) ?></div>
+  <div class="alert alert--<?= $msgType ?>" role="alert"><?= htmlspecialchars($msg) ?></div>
 <?php endif; ?>
 
 <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-6);">

@@ -8,15 +8,27 @@ $id = (int)($_GET['id'] ?? 0);
 if (!$id) { header("Location: manage_modules.php"); exit; }
 
 $msg = '';
+$msgType = 'success';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name     = trim($_POST['ModuleName']);
-    $desc     = trim($_POST['Description']);
+    $name     = trim($_POST['ModuleName'] ?? '');
+    $desc     = trim($_POST['Description'] ?? '');
     $leaderId = !empty($_POST['ModuleLeaderID']) ? (int)$_POST['ModuleLeaderID'] : null;
-    $pdo->prepare("UPDATE modules SET ModuleName=?, Description=?, ModuleLeaderID=?, IsPublished=? WHERE ModuleID=?")
-        ->execute([$name, $desc, $leaderId, $pub, $id]);
-
-    $msg = 'Module updated.';
+    $pub      = isset($_POST['IsPublished']) ? 1 : 0;
+    
+    if ($name) {
+        try {
+            $pdo->prepare("UPDATE modules SET ModuleName=?, Description=?, ModuleLeaderID=?, IsPublished=? WHERE ModuleID=?")
+                ->execute([$name, $desc, $leaderId, $pub, $id]);
+            $msg = 'Module updated successfully.';
+        } catch (PDOException $e) {
+            $msg = 'Failed to update module. Please try again.';
+            $msgType = 'error';
+        }
+    } else {
+        $msg = 'Module name is required.';
+        $msgType = 'error';
+    }
 }
 
 $mod  = $pdo->prepare("
@@ -44,7 +56,7 @@ $staff = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetchAll(
 </div>
 
 <?php if ($msg): ?>
-  <div class="alert alert--success" role="alert"><?= htmlspecialchars($msg) ?></div>
+  <div class="alert alert--<?= $msgType ?>" role="alert"><?= htmlspecialchars($msg) ?></div>
 <?php endif; ?>
 
 <div class="admin-section-card">
