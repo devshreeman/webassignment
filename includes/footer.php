@@ -16,7 +16,7 @@ $year = date('Y');
       <!-- Brand -->
       <div class="site-footer__brand">
         <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
-          <span style="font-family:'Merriweather',serif;font-size:1.15rem;font-weight:700;color:#fff;line-height:1.2;">Student Course Hub</span>
+          <span style="font-family:'Merriweather',serif;font-size:1.15rem;font-weight:700;color:#fff;line-height:1.2;">University of Liverpool</span>
         </div>
         <p>Inspiring minds, shaping futures. Explore undergraduate and postgraduate programmes designed to launch your career.</p>
         <p style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:1.25rem;margin-bottom:0;">WCAG 2.1 AA Compliant | UK GDPR Registered</p>
@@ -56,7 +56,7 @@ $year = date('Y');
 
     <div class="site-footer__bottom">
       <p class="site-footer__copyright">
-        &copy; <?= $year ?> Student Course Hub. All rights reserved.
+        &copy; <?= $year ?> University of Liverpool. All rights reserved.
       </p>
       <div class="site-footer__legal">
         <a href="<?= $footerBase ?>privacy.php">Privacy</a>

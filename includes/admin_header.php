@@ -35,7 +35,7 @@ function adminIcon(string $name): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= htmlspecialchars($pageTitle) ?> | Admin — Student Course Hub</title>
+  <title><?= htmlspecialchars($pageTitle) ?> | Admin — University of Liverpool</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="../css/university.css">
@@ -45,9 +45,9 @@ function adminIcon(string $name): string {
 <!-- Admin Top Navbar -->
 <header class="navbar" id="site-navbar" style="position:sticky;top:0;z-index:200;">
   <div class="navbar__inner">
-    <a href="../admin/dashboard.php" class="navbar__brand" aria-label="Student Course Hub Administration">
+    <a href="../admin/dashboard.php" class="navbar__brand" aria-label="University of Liverpool Administration">
       <div class="navbar__site-name">
-        <span style="font-size: 1.15rem;">Student Course Hub</span>
+        <span style="font-size: 1.15rem;">University of Liverpool</span>
         <span>Administration</span>
       </div>
     </a>

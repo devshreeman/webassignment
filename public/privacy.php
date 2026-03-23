@@ -40,7 +40,7 @@ include('../includes/header.php');
       <p>We do not sell or share your personal data with third parties for marketing purposes.</p>
 
       <h2 style="font-size:var(--text-xl);margin-top:var(--space-8);margin-bottom:var(--space-4);">3. Legal Basis for Processing</h2>
-      <p>We process your data under the lawful basis of <strong>legitimate interest</strong> — specifically, the legitimate interest of the University in communicating with prospective students who have voluntarily expressed interest in studying with us.</p>
+      <p>We process your data under the lawful basis of <strong>legitimate interest</strong> — specifically, the legitimate interest of the University of Liverpool in communicating with prospective students who have voluntarily expressed interest in studying with us.</p>
 
       <h2 style="font-size:var(--text-xl);margin-top:var(--space-8);margin-bottom:var(--space-4);">4. Data Retention</h2>
       <p>Your data will be retained for a maximum of <strong>24 months</strong> from the date of registration, or until you request removal — whichever comes sooner.</p>
@@ -53,10 +53,10 @@ include('../includes/header.php');
         <li>Request erasure of your data ("the right to be forgotten").</li>
         <li>Withdraw consent or object to processing at any time.</li>
       </ul>
-      <p>To exercise any of these rights, please contact: <a href="mailto:dataprotection@excellence.ac.uk">dataprotection@excellence.ac.uk</a></p>
+      <p>To exercise any of these rights, please contact: <a href="mailto:dataprotection@liverpool.ac.uk">dataprotection@liverpool.ac.uk</a></p>
 
       <h2 style="font-size:var(--text-xl);margin-top:var(--space-8);margin-bottom:var(--space-4);">6. Data Security</h2>
-      <p>All personal data is stored in a secured, password-protected database server. Access is restricted to authorised University administrators. All data transmission occurs over HTTPS.</p>
+      <p>All personal data is stored in a secured, password-protected database server. Access is restricted to authorised University of Liverpool administrators. All data transmission occurs over HTTPS.</p>
 
       <h2 style="font-size:var(--text-xl);margin-top:var(--space-8);margin-bottom:var(--space-4);">7. Complaints</h2>
       <p>If you have concerns about how we handle your data, you may lodge a complaint with the <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer">Information Commissioner's Office (ICO)</a>.</p>
