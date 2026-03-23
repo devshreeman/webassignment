@@ -33,7 +33,7 @@ $mod_stmt = $pdo->prepare("
     FROM programmemodules pm
     JOIN modules m ON pm.ModuleID = m.ModuleID
     LEFT JOIN staff s ON m.ModuleLeaderID = s.StaffID
-    WHERE pm.ProgrammeID = ? AND m.IsPublished = 1
+    WHERE pm.ProgrammeID = ?
     ORDER BY pm.Year ASC, m.ModuleName ASC
 ");
 $mod_stmt->execute([$id]);
@@ -180,7 +180,7 @@ include('../includes/header.php');
         <div style="background:linear-gradient(135deg,var(--color-primary) 0%,#0d3a6e 100%);border-radius:var(--radius-lg);padding:var(--space-6);color:#fff;text-align:center;">
           <div style="font-size:2rem;margin-bottom:var(--space-3);" aria-hidden="true">🎓</div>
           <h4 style="color:#fff;font-family:var(--font-serif);margin-bottom:var(--space-3);">Interested in this Programme?</h4>
-          <p style="color:rgba(255,255,255,0.75);font-size:var(--text-sm);margin-bottom:var(--space-5);">Register to receive updates on open days, application deadlines, and programme news.</p>
+          <p style="color:rgba(255,255,255,0.75);font-size:var(--text-sm);margin-bottom:var(--space-5);">Register to receive updates on application deadlines and programme news.</p>
           <a href="register_interest.php?id=<?= $id ?>" class="btn btn-primary" style="display:block;text-align:center;">Register My Interest</a>
         </div>
 

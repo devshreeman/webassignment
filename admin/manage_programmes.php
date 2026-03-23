@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("Location: edit_programmes.php?id=$newId&msg=created");
                 exit();
             } catch (PDOException $e) {
-                $msg     = 'Failed to create programme. Please try again.';
+                $msg     = 'Failed to create programme: ' . $e->getMessage();
                 $msgType = 'error';
             }
         } elseif (!$name || !$level) {

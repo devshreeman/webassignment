@@ -37,7 +37,7 @@ $year = date('Y');
       <div>
         <h3 class="site-footer__heading">Study with Us</h3>
         <ul class="site-footer__links">
-          <li><a href="<?= $footerBase ?>open-days.php">Open Days</a></li>
+          <li><a href="<?= $footerBase ?>index.php">Browse Programmes</a></li>
           <li><a href="<?= $footerBase ?>contact.php">Contact Admissions</a></li>
         </ul>
       </div>

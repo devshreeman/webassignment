@@ -2,7 +2,7 @@
 include('../config/db.php');
 
 $staff = $pdo->query("
-    SELECT StaffID, Name, Email, Bio, Photo
+    SELECT StaffID, Name, Email, Photo
     FROM staff
     ORDER BY Name
 ")->fetchAll(PDO::FETCH_ASSOC);

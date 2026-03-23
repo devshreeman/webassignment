@@ -33,7 +33,7 @@ include('../includes/header.php');
       <h2 style="font-size:var(--text-xl);margin-top:var(--space-8);margin-bottom:var(--space-4);">2. How We Use Your Information</h2>
       <p>We use the information you provide to:</p>
       <ul style="margin-bottom:var(--space-4);">
-        <li>Send you updates about open days and events relevant to your chosen programme(s).</li>
+        <li>Send you updates about events relevant to your chosen programme(s).</li>
         <li>Notify you of application deadlines and key programme information.</li>
         <li>Respond to your enquiries submitted via our contact form.</li>
       </ul>

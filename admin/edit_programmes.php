@@ -103,8 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_
     if ($modName) {
         try {
             $pdo->beginTransaction();
-            $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID, IsPublished) VALUES (?,?,?,?)")
-                ->execute([$modName, $modDesc, $leaderId, $pub]);
+            $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID) VALUES (?,?,?)")
+                ->execute([$modName, $modDesc, $leaderId]);
             $newMid = $pdo->lastInsertId();
             $pdo->prepare("INSERT INTO programmemodules (ProgrammeID, ModuleID, Year) VALUES (?,?,?)")
                 ->execute([$id, $newMid, $year]);
@@ -178,7 +178,7 @@ if (!$prog) { header("Location: manage_programmes.php"); exit; }
 
 /* ── Fetch Modules (grouped by year) ── */
 $modStmt = $pdo->prepare("
-    SELECT m.ModuleID, m.ModuleName, m.Description, m.IsPublished, pm.Year,
+    SELECT m.ModuleID, m.ModuleName, m.Description, pm.Year,
            s.Name AS LeaderName
     FROM programmemodules pm
     JOIN modules m ON pm.ModuleID = m.ModuleID
@@ -437,7 +437,6 @@ $duration = (int)($prog['Duration'] ?? 3);
               <tr>
                 <th scope="col">Module Name</th>
                 <th scope="col">Leader</th>
-                <th scope="col">Status</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -453,11 +452,6 @@ $duration = (int)($prog['Duration'] ?? 3);
                     <?php endif; ?>
                   </td>
                   <td><?= !empty($m['LeaderName']) ? htmlspecialchars($m['LeaderName']) : '<span style="color:var(--color-text-muted)">—</span>' ?></td>
-                  <td>
-                    <span class="status-badge <?= $m['IsPublished'] ? 'status-badge--published' : 'status-badge--draft' ?>">
-                      <?= $m['IsPublished'] ? 'Published' : 'Draft' ?>
-                    </span>
-                  </td>
                   <td>
                     <div class="td-actions">
                       <a href="edit_modules.php?id=<?= $m['ModuleID'] ?>" class="btn btn-primary btn-sm">Edit</a>

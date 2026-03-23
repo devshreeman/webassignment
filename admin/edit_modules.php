@@ -14,12 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name     = trim($_POST['ModuleName'] ?? '');
     $desc     = trim($_POST['Description'] ?? '');
     $leaderId = !empty($_POST['ModuleLeaderID']) ? (int)$_POST['ModuleLeaderID'] : null;
-    $pub      = isset($_POST['IsPublished']) ? 1 : 0;
     
     if ($name) {
         try {
-            $pdo->prepare("UPDATE modules SET ModuleName=?, Description=?, ModuleLeaderID=?, IsPublished=? WHERE ModuleID=?")
-                ->execute([$name, $desc, $leaderId, $pub, $id]);
+            $pdo->prepare("UPDATE modules SET ModuleName=?, Description=?, ModuleLeaderID=? WHERE ModuleID=?")
+                ->execute([$name, $desc, $leaderId, $id]);
             $msg = 'Module updated successfully.';
         } catch (PDOException $e) {
             $msg = 'Failed to update module. Please try again.';
@@ -76,15 +75,6 @@ $staff = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetchAll(
             </option>
           <?php endforeach; ?>
         </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group" style="display:flex;align-items:flex-end;">
-        <label style="display:flex;align-items:center;gap:var(--space-3);cursor:pointer;font-size:var(--text-sm);">
-          <input type="checkbox" name="IsPublished" value="1" <?= $mod['IsPublished'] ? 'checked' : '' ?>
-                 style="width:18px;height:18px;accent-color:var(--color-primary);">
-          <span>Published</span>
-        </label>
       </div>
     </div>
     <div class="form-group">

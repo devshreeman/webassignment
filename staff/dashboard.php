@@ -53,6 +53,10 @@ include('../includes/header.php');
         <h1 class="admin-page-title" style="margin-bottom: var(--space-1);">Welcome, <?= htmlspecialchars($staff['Name']) ?></h1>
         <p class="admin-page-subtitle">Staff Portal — View your teaching responsibilities and related programmes.</p>
       </div>
+      <div style="display:flex; gap:var(--space-3);">
+        <a href="interested_students.php" class="btn btn-primary">Interested Students</a>
+        <a href="settings.php" class="btn btn-secondary">Profile Settings</a>
+      </div>
     </div>
   </div>
 </section>

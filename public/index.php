@@ -44,7 +44,7 @@ $programmes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* Fetch Statistics */
 $totalProgrammes = $pdo->query("SELECT COUNT(*) FROM programmes WHERE IsPublished = 1")->fetchColumn();
-$totalModules    = $pdo->query("SELECT COUNT(*) FROM modules WHERE IsPublished = 1")->fetchColumn();
+$totalModules    = $pdo->query("SELECT COUNT(*) FROM modules")->fetchColumn();
 
 /* Helper Function: Get Programme Image */
 function getProgrammeImage($prog) {
@@ -210,7 +210,7 @@ include('../includes/header.php');
       <div style="max-width:600px;">
         <h2 class="interest-cta__title">Ready to Take the Next Step?</h2>
         <p class="interest-cta__description">
-          Register your interest in any of our programmes to receive updates about open days, application deadlines, and exclusive events.
+          Register your interest in any of our programmes to receive updates about application deadlines and exclusive events.
         </p>
         <a href="#programmes-section" class="btn btn-primary btn-lg">Browse All Programmes</a>
       </div>

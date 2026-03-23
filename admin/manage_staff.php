@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$name, $email, $bio, $photoPath, $hash]);
             $msg = 'Staff member added successfully.';
         } catch (PDOException $e) {
-            $msg     = 'Failed to add staff member. Please try again.';
+            $msg     = 'Failed to add staff member: ' . $e->getMessage();
             $msgType = 'error';
         }
     } else {

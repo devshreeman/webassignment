@@ -152,10 +152,6 @@ $contactDetails = [
             </div>
           </div>
         <?php endforeach; ?>
-
-        <div style="margin-top:var(--space-6);">
-          <a href="open-days.php" class="btn btn-secondary" style="width:100%;justify-content:center;">View Open Day Dates</a>
-        </div>
       </div>
 
     </div>

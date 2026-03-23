@@ -51,12 +51,6 @@ $_pubBase    = $rootBase . 'public/';
           </a>
         </li>
         <li>
-          <a href="<?= $_pubBase ?>open-days.php"
-             <?= $activePage === 'opendays' ? 'class="active" aria-current="page"' : '' ?>>
-            Open Days
-          </a>
-        </li>
-        <li>
           <a href="<?= $_pubBase ?>contact.php"
              <?= $activePage === 'contact'  ? 'class="active" aria-current="page"' : '' ?>>
             Contact
@@ -77,7 +71,27 @@ $_pubBase    = $rootBase . 'public/';
           </div>
         </div>
       <?php elseif (isset($_SESSION['staff'])): ?>
-        <a href="<?= $rootBase ?>staff/logout.php" class="btn btn-primary btn-sm">Sign Out</a>
+        <div class="login-dropdown" id="loginDropdown">
+          <button class="login-dropdown__toggle" id="loginToggleBtn" aria-haspopup="true" aria-expanded="false" type="button">
+            <?= htmlspecialchars($_SESSION['staff']['Name']) ?> ▾
+          </button>
+          <div class="login-dropdown__menu" id="loginDropdownMenu" role="menu">
+            <a href="<?= $rootBase ?>staff/dashboard.php" role="menuitem">Dashboard</a>
+            <a href="<?= $rootBase ?>staff/settings.php" role="menuitem">Settings</a>
+            <a href="<?= $rootBase ?>staff/logout.php" role="menuitem">Sign Out</a>
+          </div>
+        </div>
+      <?php elseif (isset($_SESSION['student'])): ?>
+        <div class="login-dropdown" id="loginDropdown">
+          <button class="login-dropdown__toggle" id="loginToggleBtn" aria-haspopup="true" aria-expanded="false" type="button">
+            <?= htmlspecialchars($_SESSION['student']['FullName']) ?> ▾
+          </button>
+          <div class="login-dropdown__menu" id="loginDropdownMenu" role="menu">
+            <a href="<?= $rootBase ?>students/dashboard.php" role="menuitem">Dashboard</a>
+            <a href="<?= $rootBase ?>students/settings.php" role="menuitem">Settings</a>
+            <a href="<?= $rootBase ?>students/logout.php" role="menuitem">Sign Out</a>
+          </div>
+        </div>
       <?php else: ?>
         <div class="login-dropdown" id="loginDropdown">
           <button class="login-dropdown__toggle" id="loginToggleBtn" aria-haspopup="true" aria-expanded="false" type="button">
@@ -89,6 +103,7 @@ $_pubBase    = $rootBase . 'public/';
           <div class="login-dropdown__menu" id="loginDropdownMenu" role="menu">
             <a href="<?= $rootBase ?>admin/login.php" role="menuitem">Admin Login</a>
             <a href="<?= $rootBase ?>staff/login.php" role="menuitem">Staff Login</a>
+            <a href="<?= $rootBase ?>students/login.php" role="menuitem">Student Login</a>
           </div>
         </div>
       <?php endif; ?>

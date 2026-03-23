@@ -14,26 +14,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name     = trim($_POST['ModuleName']);
         $desc     = trim($_POST['Description']);
         $leaderId = !empty($_POST['ModuleLeaderID']) ? (int)$_POST['ModuleLeaderID'] : null;
-        $pub      = isset($_POST['IsPublished']) ? 1 : 0;
 
         if ($name) {
             try {
-                $stmtM = $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID, IsPublished) VALUES (?,?,?,?)");
-                $stmtM->execute([$name, $desc, $leaderId, $pub]);
+                $stmtM = $pdo->prepare("INSERT INTO modules (ModuleName, Description, ModuleLeaderID) VALUES (?,?,?)");
+                $stmtM->execute([$name, $desc, $leaderId]);
                 $msg = 'Module created successfully.';
             } catch (PDOException $e) {
-                $msg = 'Failed to create module. Please try again.';
+                $msg = 'Failed to create module: ' . $e->getMessage();
                 $msgType = 'error';
             }
         } else {
             $msg     = 'Module name is required.';
             $msgType = 'error';
         }
-    } elseif ($action === 'toggle') {
-        $mid    = (int)$_POST['ModuleID'];
-        $newPub = (int)$_POST['IsPublished'];
-        $pdo->prepare("UPDATE modules SET IsPublished = ? WHERE ModuleID = ?")->execute([$newPub, $mid]);
-        $msg = 'Module visibility updated.';
     }
 }
 
@@ -103,11 +97,7 @@ $staff      = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetc
       <label class="form-label" for="ModuleDescription">Description</label>
       <textarea class="form-textarea" id="ModuleDescription" name="Description" rows="3" placeholder="Describe what this module covers…"></textarea>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
-      <label style="display:flex;align-items:center;gap:var(--space-3);cursor:pointer;font-size:var(--text-sm);">
-        <input type="checkbox" name="IsPublished" value="1" style="width:18px;height:18px;accent-color:var(--color-primary);">
-        <span>Publish immediately</span>
-      </label>
+    <div style="display:flex;justify-content:flex-end;">
       <button type="submit" class="btn btn-primary">Add Module</button>
     </div>
   </form>
@@ -126,7 +116,6 @@ $staff      = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetc
           <th scope="col">Programme</th>
           <th scope="col">Year</th>
           <th scope="col">Leader</th>
-          <th scope="col">Status</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -139,21 +128,8 @@ $staff      = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetc
               <td><?= !empty($m['Year']) ? 'Year ' . htmlspecialchars($m['Year']) : '—' ?></td>
               <td><?= htmlspecialchars($m['LeaderName'] ?? '—') ?></td>
               <td>
-                <span class="status-badge <?= $m['IsPublished'] ? 'status-badge--published' : 'status-badge--draft' ?>">
-                  <?= $m['IsPublished'] ? 'Published' : 'Draft' ?>
-                </span>
-              </td>
-              <td>
                 <div class="td-actions">
                   <a href="edit_modules.php?id=<?= $m['ModuleID'] ?>" class="btn btn-primary btn-sm">Edit</a>
-                  <form method="POST" style="display:inline;">
-                    <input type="hidden" name="_action" value="toggle">
-                    <input type="hidden" name="ModuleID" value="<?= $m['ModuleID'] ?>">
-                    <input type="hidden" name="IsPublished" value="<?= $m['IsPublished'] ? 0 : 1 ?>">
-                    <button type="submit" class="btn btn-sm <?= $m['IsPublished'] ? 'btn-secondary' : 'btn-success' ?>">
-                      <?= $m['IsPublished'] ? 'Unpublish' : 'Publish' ?>
-                    </button>
-                  </form>
                   <a href="manage_modules.php?delete=<?= $m['ModuleID'] ?>"
                      class="btn btn-danger btn-sm"
                      data-confirm="Delete '<?= htmlspecialchars(addslashes($m['ModuleName'])) ?>'?">
@@ -164,7 +140,7 @@ $staff      = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetc
             </tr>
           <?php endforeach; ?>
         <?php else: ?>
-          <tr><td colspan="6" class="text-center text-muted" style="padding:var(--space-8);">No modules yet.</td></tr>
+          <tr><td colspan="5" class="text-center text-muted" style="padding:var(--space-8);">No modules yet.</td></tr>
         <?php endif; ?>
       </tbody>
     </table>

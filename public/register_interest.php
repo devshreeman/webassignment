@@ -16,6 +16,20 @@ if (!$prog) {
 }
 
 session_start();
+
+$isLoggedIn = isset($_SESSION['student']);
+
+if (!$isLoggedIn) {
+    $_SESSION['redirect_after_login'] = "register_interest.php?id=$progId";
+    $_SESSION['redirect_message'] = 'Please create an account or login to register your interest in programmes.';
+    header("Location: ../students/register.php?redirect=register_interest&prog=$progId");
+    exit;
+}
+
+$studentId = $_SESSION['student']['StudentID'];
+$defaultName = $_SESSION['student']['FullName'];
+$defaultEmail = $_SESSION['student']['Email'];
+
 $errors  = [];
 $success = false;
 
@@ -29,14 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         /* Check for Duplicate Registration */
-        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM interestedstudents WHERE ProgrammeID = ? AND Email = ?");
-        $checkStmt->execute([$progId, $email]);
+        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM interestedstudents WHERE ProgrammeID = ? AND StudentID = ?");
+        $checkStmt->execute([$progId, $studentId]);
+        
         if ($checkStmt->fetchColumn() > 0) {
-            $errors[] = 'This email is already registered for this programme.';
+            $errors[] = 'You have already registered interest in this programme.';
         } else {
-            $ins = $pdo->prepare("INSERT INTO interestedstudents (ProgrammeID, StudentName, Email) VALUES (?, ?, ?)");
-            $ins->execute([$progId, $name, $email]);
-            $_SESSION['flash_success'] = 'Thank you! Your interest has been registered. We will be in touch soon.';
+            $ins = $pdo->prepare("INSERT INTO interestedstudents (ProgrammeID, StudentID, StudentName, Email) VALUES (?, ?, ?, ?)");
+            $ins->execute([$progId, $studentId, $name, $email]);
+            $_SESSION['flash_success'] = 'Thank you! Your interest has been registered. You can manage it from your dashboard.';
             header("Location: programme.php?id=$progId");
             exit;
         }
@@ -90,7 +105,7 @@ include('../includes/header.php');
     <div class="form-card">
       <div style="margin-bottom:var(--space-6);">
         <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
-          Fill in your details below and we'll keep you informed about <strong><?= htmlspecialchars($prog['ProgrammeName']) ?></strong> — including open days, application windows, and programme updates. Your information is stored securely and in accordance with our Privacy Policy.
+          Fill in your details below and we'll keep you informed about <strong><?= htmlspecialchars($prog['ProgrammeName']) ?></strong> — including application windows and programme updates. Your information is stored securely and in accordance with our Privacy Policy.
         </p>
       </div>
 
@@ -104,11 +119,12 @@ include('../includes/header.php');
             type="text"
             id="StudentName"
             name="StudentName"
-            value="<?= htmlspecialchars($_POST['StudentName'] ?? '') ?>"
+            value="<?= htmlspecialchars($_POST['StudentName'] ?? $defaultName) ?>"
             placeholder="e.g. Jane Smith"
             required
             aria-required="true"
             autocomplete="name"
+            readonly
           >
         </div>
 
@@ -121,11 +137,12 @@ include('../includes/header.php');
             type="email"
             id="Email"
             name="Email"
-            value="<?= htmlspecialchars($_POST['Email'] ?? '') ?>"
+            value="<?= htmlspecialchars($_POST['Email'] ?? $defaultEmail) ?>"
             placeholder="you@example.com"
             required
             aria-required="true"
             autocomplete="email"
+            readonly
           >
           <small class="form-hint">We'll only use this to send you programme-related updates. No spam, ever.</small>
         </div>
