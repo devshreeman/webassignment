@@ -1,0 +1,15 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield background for dark backgrounds -->
+  <path d="M24 4L6 10V20C6 30.5 13 40 24 44C35 40 42 30.5 42 20V10L24 4Z" fill="#C5A96A"/>
+  <path d="M24 4L6 10V20C6 30.5 13 40 24 44C35 40 42 30.5 42 20V10L24 4Z" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.3"/>
+  
+  <!-- Book symbol -->
+  <rect x="16" y="16" width="16" height="18" rx="1" fill="#002147"/>
+  <line x1="24" y1="16" x2="24" y2="34" stroke="#C5A96A" stroke-width="1.5"/>
+  <line x1="16" y1="20" x2="23" y2="20" stroke="#C5A96A" stroke-width="1"/>
+  <line x1="25" y1="20" x2="32" y2="20" stroke="#C5A96A" stroke-width="1"/>
+  <line x1="16" y1="24" x2="23" y2="24" stroke="#C5A96A" stroke-width="1"/>
+  <line x1="25" y1="24" x2="32" y2="24" stroke="#C5A96A" stroke-width="1"/>
+  <line x1="16" y1="28" x2="23" y2="28" stroke="#C5A96A" stroke-width="1"/>
+  <line x1="25" y1="28" x2="32" y2="28" stroke="#C5A96A" stroke-width="1"/>
+</svg>

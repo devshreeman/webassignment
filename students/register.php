@@ -66,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Registration - University of Liverpool</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../css/university.css">
 </head>
 <body>
@@ -73,6 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <main class="container">
         <div class="auth-container">
+            <a href="../public/index.php" class="auth-card__logo">
+                <img src="../assets/logo.svg" alt="" width="48" height="48" aria-hidden="true">
+                <div class="auth-card__logo-text">
+                    <span>University of Liverpool</span>
+                    <span>Student Portal</span>
+                </div>
+            </a>
+            
             <h1>Student Registration</h1>
             <p>Create your student account to manage your programme interests.</p>
             

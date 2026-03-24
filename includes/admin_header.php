@@ -36,6 +36,7 @@ function adminIcon(string $name): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($pageTitle) ?> | Admin — University of Liverpool</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="../css/university.css">
@@ -45,17 +46,25 @@ function adminIcon(string $name): string {
 <!-- Admin Top Navbar -->
 <header class="navbar" id="site-navbar" style="position:sticky;top:0;z-index:200;">
   <div class="navbar__inner">
+    <button class="navbar__toggle" id="adminSidebarToggle" 
+            aria-expanded="false" 
+            aria-label="Toggle admin menu"
+            style="display:none;">
+      <span></span><span></span><span></span>
+    </button>
+    
     <a href="../admin/dashboard.php" class="navbar__brand" aria-label="University of Liverpool Administration">
+      <img src="../assets/logo-white.svg" alt="" class="navbar__logo" width="40" height="40" aria-hidden="true">
       <div class="navbar__site-name">
-        <span style="font-size: 1.15rem;">University of Liverpool</span>
+        <span>University of Liverpool</span>
         <span>Administration</span>
       </div>
     </a>
     <div class="navbar__actions" style="margin-left:auto;gap:1rem;">
-      <span style="font-size:0.8rem;color:rgba(255,255,255,0.55);">
+      <span style="font-size:0.8rem;color:rgba(255,255,255,0.55);display:none;" class="admin-user-desktop">
         Signed in as <a href="../admin/admin_settings.php" style="color:#C5A96A;font-weight:600;text-decoration:none;"><?= $adminName ?></a>
       </span>
-      <a href="../public/index.php" class="btn btn-ghost btn-sm" target="_blank">View Site ↗</a>
+      <a href="../public/index.php" class="btn btn-ghost btn-sm" target="_blank" style="display:none;" id="viewSiteBtn">View Site ↗</a>
       <a href="../admin/logout.php" class="btn btn-danger btn-sm">Sign Out</a>
     </div>
   </div>

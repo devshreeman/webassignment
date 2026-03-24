@@ -16,6 +16,7 @@ $year = date('Y');
       <!-- Brand -->
       <div class="site-footer__brand">
         <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+          <img src="<?= isset($rootBase) ? $rootBase : '../' ?>assets/logo-white.svg" alt="" width="36" height="36" aria-hidden="true">
           <span style="font-family:'Merriweather',serif;font-size:1.15rem;font-weight:700;color:#fff;line-height:1.2;">University of Liverpool</span>
         </div>
         <p>Inspiring minds, shaping futures. Explore undergraduate and postgraduate programmes designed to launch your career.</p>

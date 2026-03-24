@@ -32,32 +32,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Sign Up</title>
-  <link rel="stylesheet" href="../css/style3.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign Up | University of Liverpool</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../css/university.css">
 </head>
 <body>
-  <div class="container login-box">
-    <h2>Admin Sign Up</h2>
-    <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
-    <?php if (!empty($success)) echo "<p class='success'>$success</p>"; ?>
 
-    <form method="POST">
-      <label>Email:</label>
-      <input type="email" name="email" required>
+<div class="auth-page" role="main">
+  <div class="auth-card">
 
-      <label>Password:</label>
-      <input type="password" name="password" required>
+    <a href="../public/index.php" class="auth-card__logo">
+      <img src="../assets/logo.svg" alt="" width="48" height="48" aria-hidden="true">
+      <div class="auth-card__logo-text">
+        <span>University of Liverpool</span>
+        <span>Administration</span>
+      </div>
+    </a>
 
-      <label>Confirm Password:</label>
-      <input type="password" name="confirm" required>
+    <h1 class="auth-card__title">Create Admin Account</h1>
+    <p class="auth-card__subtitle">Set up the administrator account for the system.</p>
 
-      <input type="submit" value="Sign Up" class="btn">
+    <?php if (!empty($error)): ?>
+      <div class="alert alert--error" role="alert">
+        <p style="margin:0;"><?= htmlspecialchars($error) ?></p>
+      </div>
+    <?php endif; ?>
+
+    <?php if (!empty($success)): ?>
+      <div class="alert alert--success" role="alert">
+        <p style="margin:0;"><?= htmlspecialchars($success) ?></p>
+      </div>
+    <?php endif; ?>
+
+    <form method="POST" action="" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input
+          class="form-input"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="admin@liverpool.ac.uk"
+          required
+          aria-required="true"
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          class="form-input"
+          type="password"
+          id="password"
+          name="password"
+          required
+          aria-required="true"
+          autocomplete="new-password"
+          minlength="8"
+        >
+        <small class="form-hint">Minimum 8 characters</small>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirm">Confirm Password</label>
+        <input
+          class="form-input"
+          type="password"
+          id="confirm"
+          name="confirm"
+          required
+          aria-required="true"
+          autocomplete="new-password"
+          minlength="8"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;">Create Admin Account</button>
     </form>
 
-    <p class="signup-text">
-      Already have an account? 
-      <a href="login.php">Login</a>
-    </p>
+    <div class="auth-card__footer">
+      Already have an account? <a href="login.php">Sign in here</a>
+    </div>
+
   </div>
+</div>
+
 </body>
 </html>

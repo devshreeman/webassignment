@@ -20,6 +20,7 @@ $_pubBase    = $rootBase . 'public/';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="<?= htmlspecialchars($pageTitle) ?> — Explore undergraduate and postgraduate programmes at the University of Liverpool.">
   <title><?= htmlspecialchars($pageTitle) ?> | University of Liverpool</title>
+  <link rel="icon" type="image/svg+xml" href="<?= $rootBase ?>assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="<?= $cssBase ?>css/university.css">
@@ -31,8 +32,10 @@ $_pubBase    = $rootBase . 'public/';
 <header class="navbar" id="site-navbar">
   <div class="navbar__inner">
     <a href="<?= $_pubBase ?>index.php" class="navbar__brand" aria-label="University of Liverpool — Home">
+      <img src="<?= $rootBase ?>assets/logo-white.svg" alt="" class="navbar__logo" width="40" height="40" aria-hidden="true">
       <div class="navbar__site-name">
-        <span style="font-size: 1.25rem;">University of Liverpool</span>
+        <span>University of Liverpool</span>
+        <span>Student Course Hub</span>
       </div>
     </a>
 

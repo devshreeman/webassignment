@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Staff Login | University of Liverpool</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="../css/university.css">
@@ -54,6 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="auth-page" role="main">
   <div class="auth-card">
+
+    <a href="../public/index.php" class="auth-card__logo">
+      <img src="../assets/logo.svg" alt="" width="48" height="48" aria-hidden="true">
+      <div class="auth-card__logo-text">
+        <span>University of Liverpool</span>
+        <span>Staff Portal</span>
+      </div>
+    </a>
 
     <h1 class="auth-card__title">Staff Sign In</h1>
     <p class="auth-card__subtitle">Access your modules and teaching schedule.</p>
