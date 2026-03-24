@@ -27,8 +27,6 @@ $_pubBase    = $rootBase . 'public/';
 </head>
 <body>
 
-<a class="skip-link" href="#main-content">Skip to main content</a>
-
 <header class="navbar" id="site-navbar">
   <div class="navbar__inner">
     <a href="<?= $_pubBase ?>index.php" class="navbar__brand" aria-label="University of Liverpool — Home">

@@ -73,7 +73,6 @@ include('../includes/header.php');
 <section class="hero">
   <div class="hero__inner">
     <div class="hero__content">
-      <span class="hero__kicker">Welcome</span>
       <h1 class="hero__title">
         Discover Your<br><span class="hero__title-highlight">Perfect Programme</span>
       </h1>
