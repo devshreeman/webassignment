@@ -73,15 +73,30 @@ include('../includes/header.php');
 <section class="hero">
   <div class="hero__inner">
     <div class="hero__content">
+      <span class="hero__kicker">Welcome</span>
       <h1 class="hero__title">
-        Discover Your<br><em>Perfect Programme</em>
+        Discover Your<br><span class="hero__title-highlight">Perfect Programme</span>
       </h1>
       <p class="hero__description">
         Explore our range of undergraduate and postgraduate programmes. Find your passion, register your interest, and take the first step towards an outstanding future.
       </p>
       <div class="hero__actions">
-        <a href="#programmes-section" class="btn btn-primary btn-lg">Browse Programmes</a>
+        <a href="#programmes-section" class="btn btn-primary btn-lg">Explore Programmes</a>
         <a href="staff.php" class="btn btn-ghost btn-lg">Meet Our Staff</a>
+      </div>
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <div class="hero__stat-value"><?= $totalProgrammes ?>+</div>
+          <div class="hero__stat-label">Programmes</div>
+        </div>
+        <div class="hero__stat">
+          <div class="hero__stat-value"><?= $totalModules ?>+</div>
+          <div class="hero__stat-label">Modules</div>
+        </div>
+        <div class="hero__stat">
+          <div class="hero__stat-value">Top 200</div>
+          <div class="hero__stat-label">Global Ranking</div>
+        </div>
       </div>
     </div>
     <div class="hero__visual" aria-hidden="true">
@@ -94,7 +109,7 @@ include('../includes/header.php');
 </section>
 
 <!-- MAIN PROGRAMMES SECTION -->
-<section class="section" id="programmes-section">
+<section class="section" id="programmes-section" style="background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface) 100%);">
   <div class="container">
 
     <!-- Section Header -->
@@ -109,6 +124,9 @@ include('../includes/header.php');
           All Available Programmes
         <?php endif; ?>
       </h2>
+      <p class="section-header__subtitle">
+        Choose from our diverse range of programmes designed to prepare you for success in your chosen field.
+      </p>
       <div class="section-divider"></div>
     </div>
 
@@ -128,7 +146,7 @@ include('../includes/header.php');
           >
         </div>
         <div class="filter-bar__group">
-          <label class="filter-bar__label" for="level">Filter by Level</label>
+          <label class="filter-bar__label" for="level">Study Level</label>
           <select class="filter-bar__select" id="level" name="level" aria-label="Filter by study level">
             <option value="0" <?= $selectedLevel === 0 ? 'selected' : '' ?>>All Levels</option>
             <?php foreach ($levels as $lvl): ?>
@@ -138,19 +156,19 @@ include('../includes/header.php');
             <?php endforeach; ?>
           </select>
         </div>
-        <div style="display:flex;align-items:flex-end;">
+        <div style="display:flex;align-items:flex-end;gap:var(--space-2);">
           <button type="submit" class="btn btn-primary">Apply Filters</button>
           <?php if ($searchKeyword || $selectedLevel): ?>
-            <a href="index.php" class="btn btn-secondary btn-sm" style="margin-left:0.5rem;">Clear</a>
+            <a href="index.php" class="btn btn-secondary btn-sm">Clear</a>
           <?php endif; ?>
         </div>
       </div>
     </form>
 
     <!-- Results count -->
-    <p class="text-muted text-sm mb-6">
-      Showing <strong><?= count($programmes) ?></strong> programme<?= count($programmes) !== 1 ? 's' : '' ?>
-      <?= $searchKeyword ? ' matching "<strong>' . htmlspecialchars($searchKeyword) . '</strong>"' : '' ?>
+    <p class="text-muted text-sm mb-6" style="font-weight:500;">
+      Showing <strong style="color:var(--color-primary);"><?= count($programmes) ?></strong> programme<?= count($programmes) !== 1 ? 's' : '' ?>
+      <?= $searchKeyword ? ' matching "<strong style="color:var(--color-primary);">' . htmlspecialchars($searchKeyword) . '</strong>"' : '' ?>
     </p>
 
     <!-- Programme Cards Grid -->
@@ -169,7 +187,7 @@ include('../includes/header.php');
             </div>
             <div class="programme-card__body">
               <h3 class="programme-card__title">
-                <a href="programme.php?id=<?= $p['ProgrammeID'] ?>" style="color:inherit;text-decoration:none;">
+                <a href="programme.php?id=<?= $p['ProgrammeID'] ?>">
                   <?= htmlspecialchars($p['ProgrammeName']) ?>
                 </a>
               </h3>
@@ -183,7 +201,10 @@ include('../includes/header.php');
                 <a href="programme.php?id=<?= $p['ProgrammeID'] ?>"
                    class="btn btn-primary btn-sm"
                    aria-label="View details for <?= htmlspecialchars($p['ProgrammeName']) ?>">
-                  View Details →
+                  View Details
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
                 </a>
               </div>
             </div>
@@ -207,12 +228,15 @@ include('../includes/header.php');
 <section class="section--sm" style="background: var(--color-surface); border-top: 1px solid var(--color-border);">
   <div class="container">
     <div class="interest-cta">
-      <div style="max-width:600px;">
+      <div class="interest-cta__content">
         <h2 class="interest-cta__title">Ready to Take the Next Step?</h2>
         <p class="interest-cta__description">
-          Register your interest in any of our programmes to receive updates about application deadlines and exclusive events.
+          Register your interest in any of our programmes to receive updates about application deadlines, exclusive events, and programme news.
         </p>
-        <a href="#programmes-section" class="btn btn-primary btn-lg">Browse All Programmes</a>
+        <div class="interest-cta__actions">
+          <a href="#programmes-section" class="btn btn-primary btn-lg">Explore All Programmes</a>
+          <a href="contact.php" class="btn btn-secondary btn-lg">Contact Admissions</a>
+        </div>
       </div>
     </div>
   </div>

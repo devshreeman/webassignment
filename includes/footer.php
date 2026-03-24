@@ -89,7 +89,7 @@ $year = date('Y');
   
   if (loginToggleBtn && loginDropdownMenu) {
     loginToggleBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); // prevent document click from firing
+      e.stopPropagation();
       const isExpanded = loginToggleBtn.getAttribute('aria-expanded') === 'true';
       loginToggleBtn.setAttribute('aria-expanded', !isExpanded);
       loginDropdownMenu.classList.toggle('is-open');
@@ -102,6 +102,42 @@ $year = date('Y');
       }
     });
   }
+  
+  // Scroll animations for programme cards
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+  
+  document.querySelectorAll('.programme-card').forEach(card => {
+    observer.observe(card);
+  });
+  
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+      if (href !== '#' && href.length > 1) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }
+    });
+  });
 </script>
 
 </body>

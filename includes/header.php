@@ -33,10 +33,7 @@ $_pubBase    = $rootBase . 'public/';
   <div class="navbar__inner">
     <a href="<?= $_pubBase ?>index.php" class="navbar__brand" aria-label="University of Liverpool — Home">
       <img src="<?= $rootBase ?>assets/logo-white.svg" alt="" class="navbar__logo" width="40" height="40" aria-hidden="true">
-      <div class="navbar__site-name">
-        <span>University of Liverpool</span>
-        <span>Student Course Hub</span>
-      </div>
+      <span class="navbar__university-name">University of Liverpool</span>
     </a>
 
     <nav aria-label="Primary navigation">
@@ -44,7 +41,7 @@ $_pubBase    = $rootBase . 'public/';
         <li>
           <a href="<?= $_pubBase ?>index.php"
              <?= $activePage === 'home'     ? 'class="active" aria-current="page"' : '' ?>>
-            Programmes
+            Home
           </a>
         </li>
         <li>
