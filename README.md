@@ -264,23 +264,23 @@ Three distinct user types with appropriate access levels:
 ## Assignment Deliverables
 
 ### Functional Requirements
-✅ **Programme Marketing**: Public-facing pages to showcase degree programmes  
-✅ **Interest Collection**: System to capture prospective student contact details  
-✅ **Mailing List Generation**: Export functionality for programme-specific mailing lists  
-✅ **Multi-Programme Interest**: Students can express interest in multiple programmes  
-✅ **Targeted Communications**: Filter and export by specific programmes  
-✅ **Content Management**: Admin panel for managing programmes, modules, and staff  
-✅ **User Authentication**: Secure login systems for admin, staff, and students  
-✅ **Data Relationships**: Proper database design with foreign keys and relationships
+- **Programme Marketing**: Public-facing pages to showcase degree programmes  
+- **Interest Collection**: System to capture prospective student contact details  
+- **Mailing List Generation**: Export functionality for programme-specific mailing lists  
+- **Multi-Programme Interest**: Students can express interest in multiple programmes  
+- **Targeted Communications**: Filter and export by specific programmes  
+- **Content Management**: Admin panel for managing programmes, modules, and staff  
+- **User Authentication**: Secure login systems for admin, staff, and students  
+- **Data Relationships**: Proper database design with foreign keys and relationships
 
 ### Technical Requirements
-✅ **No Frameworks**: Built with vanilla PHP, JavaScript, and CSS  
-✅ **Database Design**: Normalized MySQL database with proper relationships  
-✅ **Security**: Password hashing, prepared statements, input validation  
-✅ **Responsive Design**: Mobile-first responsive layout  
-✅ **Accessibility**: WCAG 2.1 AA compliance  
-✅ **Code Quality**: Clean, commented, maintainable code  
-✅ **Error Handling**: Proper error handling and user feedback
+- **No Frameworks**: Built with vanilla PHP, JavaScript, and CSS  
+- **Database Design**: Normalized MySQL database with proper relationships  
+- **Security**: Password hashing, prepared statements, input validation  
+- **Responsive Design**: Mobile-first responsive layout  
+- **Accessibility**: WCAG 2.1 AA compliance  
+- **Code Quality**: Clean, commented, maintainable code  
+- **Error Handling**: Proper error handling and user feedback
 
 ## Troubleshooting
 
