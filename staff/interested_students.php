@@ -121,9 +121,9 @@ include('../includes/header.php');
   <div class="container">
     
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-6); flex-wrap:wrap; gap:var(--space-4);">
-      <form method="GET" action="interested_students.php" style="display:flex; gap:var(--space-3); align-items:center;">
+      <form method="GET" action="interested_students.php" style="display:flex; gap:var(--space-3); align-items:center; flex-wrap:wrap;">
         <label for="prog" class="form-label" style="margin:0;">Filter by Programme:</label>
-        <select name="prog" id="prog" class="form-input" style="width:auto; min-width:250px;" onchange="this.form.submit()">
+        <select name="prog" id="prog" class="form-input" style="width:auto; min-width:200px;" onchange="this.form.submit()">
           <option value="0">All Programmes</option>
           <?php foreach ($programmes as $prog): ?>
             <option value="<?php echo $prog['ProgrammeID']; ?>" 

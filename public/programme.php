@@ -108,7 +108,7 @@ include('../includes/header.php');
       <div class="alert alert--success" role="alert">✓ <?= htmlspecialchars($successMsg) ?></div>
     <?php endif; ?>
 
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-10);align-items:start;">
+    <div class="two-col-layout">
 
       <!-- LEFT: Module List -->
       <div id="modules">

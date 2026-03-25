@@ -80,7 +80,7 @@ $topProgrammes = $pdo->query("
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:var(--space-6);margin-top:var(--space-2);">
+<div class="two-col-layout" style="margin-top:var(--space-2);">
 
   <!-- Recent Registrations -->
   <div class="admin-section-card">

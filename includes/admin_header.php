@@ -42,12 +42,11 @@ function adminIcon(string $name): string {
 <body>
 
 <!-- Admin Top Navbar -->
-<header class="navbar" id="site-navbar" style="position:sticky;top:0;z-index:200;">
+<header class="navbar admin-navbar" id="site-navbar">
   <div class="navbar__inner">
     <button class="navbar__toggle" id="adminSidebarToggle" 
             aria-expanded="false" 
-            aria-label="Toggle admin menu"
-            style="display:none;">
+            aria-label="Toggle admin menu">
       <span></span><span></span><span></span>
     </button>
     
@@ -58,11 +57,11 @@ function adminIcon(string $name): string {
         <span>Administration</span>
       </div>
     </a>
-    <div class="navbar__actions" style="margin-left:auto;gap:1rem;">
-      <span style="font-size:0.8rem;color:rgba(255,255,255,0.55);display:none;" class="admin-user-desktop">
-        Signed in as <a href="../admin/admin_settings.php" style="color:#C5A96A;font-weight:600;text-decoration:none;"><?= $adminName ?></a>
+    <div class="navbar__actions admin-navbar-actions">
+      <span class="admin-user-info">
+        Signed in as <a href="../admin/admin_settings.php"><?= $adminName ?></a>
       </span>
-      <a href="../public/index.php" class="btn btn-ghost btn-sm" target="_blank" style="display:none;" id="viewSiteBtn">View Site ↗</a>
+      <a href="../public/index.php" class="btn btn-ghost btn-sm admin-view-site-btn" target="_blank">View Site ↗</a>
       <a href="../admin/logout.php" class="btn btn-danger btn-sm">Sign Out</a>
     </div>
   </div>

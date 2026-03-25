@@ -87,7 +87,7 @@ $contactDetails = [
 
 <section class="section">
   <div class="container">
-    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:var(--space-12);align-items:start;">
+    <div class="two-col-layout">
 
       <!-- Enquiry Form -->
       <div>

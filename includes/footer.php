@@ -134,6 +134,37 @@ $year = date('Y');
       }
     });
   });
+  
+  // Preserve scroll position on filter form submit
+  const filterForm = document.getElementById('filterForm');
+  if (filterForm && typeof(Storage) !== 'undefined') {
+    // Save scroll position before form submit
+    filterForm.addEventListener('submit', function() {
+      try {
+        sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+      } catch (e) {
+        // Silently fail if sessionStorage is not available
+      }
+    });
+    
+    // Restore scroll position after page load
+    window.addEventListener('load', function() {
+      try {
+        const scrollPosition = sessionStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+          setTimeout(function() {
+            window.scrollTo({
+              top: parseInt(scrollPosition),
+              behavior: 'instant'
+            });
+          }, 0);
+          sessionStorage.removeItem('scrollPosition');
+        }
+      } catch (e) {
+        // Silently fail if sessionStorage is not available
+      }
+    });
+  }
 </script>
 
 </body>

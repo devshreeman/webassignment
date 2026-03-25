@@ -24,23 +24,6 @@
   const adminSidebar = document.querySelector('.admin-sidebar');
   
   if (adminSidebarToggle && adminSidebar) {
-    // Show toggle button on mobile
-    function checkMobile() {
-      if (window.innerWidth <= 640) {
-        adminSidebarToggle.style.display = 'flex';
-        document.querySelector('.admin-user-desktop')?.style.setProperty('display', 'none', 'important');
-        document.getElementById('viewSiteBtn')?.style.setProperty('display', 'none', 'important');
-      } else {
-        adminSidebarToggle.style.display = 'none';
-        adminSidebar.classList.remove('is-open');
-        document.querySelector('.admin-user-desktop')?.style.setProperty('display', 'inline', 'important');
-        document.getElementById('viewSiteBtn')?.style.setProperty('display', 'inline-flex', 'important');
-      }
-    }
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
     adminSidebarToggle.addEventListener('click', () => {
       const isOpen = adminSidebar.classList.toggle('is-open');
       adminSidebarToggle.setAttribute('aria-expanded', String(isOpen));
@@ -56,7 +39,31 @@
         adminSidebarToggle.setAttribute('aria-expanded', 'false');
       }
     });
+    
+    // Close sidebar when clicking a link on mobile
+    adminSidebar.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 640) {
+          adminSidebar.classList.remove('is-open');
+          adminSidebarToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
   }
+  
+  // Table scroll indicator
+  document.querySelectorAll('.data-table-wrapper').forEach(wrapper => {
+    const checkScroll = () => {
+      if (wrapper.scrollLeft > 10) {
+        wrapper.classList.add('scrolled');
+      } else {
+        wrapper.classList.remove('scrolled');
+      }
+    };
+    
+    wrapper.addEventListener('scroll', checkScroll);
+    checkScroll();
+  });
 </script>
 </body>
 </html>
