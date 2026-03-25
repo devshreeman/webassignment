@@ -1,16 +1,20 @@
 <?php
+// start session and connect to database
 session_start();
 include('../config/db.php');
 
+// make sure student is logged in
 if (!isset($_SESSION['student'])) {
     header('Location: login.php');
     exit;
 }
 
+// grab student ID and setup messages
 $studentId = $_SESSION['student']['StudentID'];
 $message = '';
 $msgType = '';
 
+// load current student info
 try {
     $stmt = $pdo->prepare("SELECT FullName, Email, Phone FROM students WHERE StudentID = ?");
     $stmt->execute([$studentId]);
@@ -21,14 +25,17 @@ try {
     $msgType = 'error';
 }
 
+// handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['_action'] ?? '';
     
+    // update profile info
     if ($action === 'update_profile') {
         $fullName = trim($_POST['fullName'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         
+        // validate required fields
         if (empty($fullName) || empty($email)) {
             $message = 'Name and email are required.';
             $msgType = 'error';
@@ -37,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msgType = 'error';
         } else {
             try {
+                // check if email is already taken by another student
                 $stmt = $pdo->prepare("SELECT StudentID FROM students WHERE Email = ? AND StudentID != ?");
                 $stmt->execute([$email, $studentId]);
                 
@@ -44,12 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $message = 'This email is already in use by another account.';
                     $msgType = 'error';
                 } else {
+                    // update student profile
                     $stmt = $pdo->prepare("UPDATE students SET FullName = ?, Email = ?, Phone = ? WHERE StudentID = ?");
                     $stmt->execute([$fullName, $email, $phone, $studentId]);
                     
+                    // update session with new info
                     $_SESSION['student']['FullName'] = $fullName;
                     $_SESSION['student']['Email'] = $email;
                     
+                    // update local variable too
                     $student['FullName'] = $fullName;
                     $student['Email'] = $email;
                     $student['Phone'] = $phone;
@@ -63,10 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } elseif ($action === 'change_password') {
+        // handle password change
         $currentPassword = $_POST['currentPassword'] ?? '';
         $newPassword = $_POST['newPassword'] ?? '';
         $confirmPassword = $_POST['confirmPassword'] ?? '';
         
+        // validate password fields
         if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
             $message = 'All password fields are required.';
             $msgType = 'error';
@@ -78,11 +91,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msgType = 'error';
         } else {
             try {
+                // verify current password is correct
                 $stmt = $pdo->prepare("SELECT Password FROM students WHERE StudentID = ?");
                 $stmt->execute([$studentId]);
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($row && password_verify($currentPassword, $row['Password'])) {
+                    // hash and save new password
                     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     $stmt = $pdo->prepare("UPDATE students SET Password = ? WHERE StudentID = ?");
                     $stmt->execute([$hashedPassword, $studentId]);

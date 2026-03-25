@@ -1,20 +1,20 @@
 <?php
 include('../config/db.php');
 
-/* Page Configuration */
+// page setup
 $pageTitle   = 'Explore Our Programmes';
 $activePage  = 'home';
 $cssBase     = '../';
 $rootBase    = '../';
 
-/* Handle Filter Parameters */
+// get filter values from URL
 $selectedLevel  = isset($_GET['level'])  ? (int)$_GET['level']  : 0;
 $searchKeyword  = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-/* Fetch Available Levels */
+// grab all the levels for the dropdown
 $levels = $pdo->query("SELECT * FROM levels ORDER BY LevelName")->fetchAll(PDO::FETCH_ASSOC);
 
-/* Build Query with Filters */
+// build the query based on filters
 $params = [];
 $where  = ['p.IsPublished = 1'];
 
@@ -42,11 +42,11 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $programmes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Fetch Statistics */
+// get stats for hero section
 $totalProgrammes = $pdo->query("SELECT COUNT(*) FROM programmes WHERE IsPublished = 1")->fetchColumn();
 $totalModules    = $pdo->query("SELECT COUNT(*) FROM modules")->fetchColumn();
 
-/* Helper Function: Get Programme Image */
+// figure out which image to show for each programme
 function getProgrammeImage($prog) {
     $name  = strtolower($prog['ProgrammeName']);
     $image = $prog['Image'] ?? '';

@@ -7,21 +7,21 @@ include('../includes/admin_header.php');
 $msg     = '';
 $msgType = 'success';
 
-/* Handle Mark as Read */
+// mark message as read
 if (isset($_GET['mark_read'])) {
     $id = (int)$_GET['mark_read'];
     $pdo->prepare("UPDATE contact_messages SET is_read = 1 WHERE id = ?")->execute([$id]);
     $msg = 'Message marked as read.';
 }
 
-/* Handle Message Deletion */
+// delete message
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
     $pdo->prepare("DELETE FROM contact_messages WHERE id = ?")->execute([$id]);
     $msg = 'Message deleted.';
 }
 
-/* Fetch All Contact Messages */
+// get all contact messages
 try {
     $messages = $pdo->query("
         SELECT * FROM contact_messages 
@@ -30,7 +30,7 @@ try {
     
     $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0")->fetchColumn();
 } catch (PDOException $e) {
-    /* Table doesn't exist yet */
+    // table doesn't exist yet, no messages to show
     $messages = [];
     $unreadCount = 0;
 }

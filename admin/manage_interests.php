@@ -22,7 +22,7 @@ $interests = $interests->fetchAll(PDO::FETCH_ASSOC);
 
 $programmes = $pdo->query("SELECT ProgrammeID, ProgrammeName FROM programmes ORDER BY ProgrammeName")->fetchAll(PDO::FETCH_ASSOC);
 
-/* Handle CSV Export */
+// handle CSV export
 if (isset($_GET['export'])) {
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="mailing_list_' . date('Y-m-d') . '.csv"');
@@ -41,7 +41,7 @@ include('../includes/admin_header.php');
 
 $msg = '';
 
-/* Handle Interest Deletion */
+// handle interest deletion
 if (isset($_GET['delete'])) {
     $iid = (int)$_GET['delete'];
     $pdo->prepare("DELETE FROM interestedstudents WHERE InterestID = ?")->execute([$iid]);

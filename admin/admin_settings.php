@@ -1,7 +1,5 @@
 <?php
-/**
- * Admin Account Settings — update own profile, change password, manage admin accounts.
- */
+// admin settings page - manage profile, password, and admin accounts
 if (session_status() === PHP_SESSION_NONE) session_start();
 include('../config/db.php');
 
@@ -13,7 +11,7 @@ $adminId = (int)$_SESSION['admin']['AdminID'];
 $msg     = '';
 $msgType = 'success';
 
-/* ── Update Profile ── */
+// update profile section
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'update_profile') {
     $name  = trim($_POST['name']);
     $email = trim($_POST['email']);
@@ -22,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
         $msg     = 'Please provide a valid name and email address.';
         $msgType = 'error';
     } else {
-        /* Check email uniqueness */
+        // check if email is already taken by another admin
         $check = $pdo->prepare("SELECT AdminID FROM admin WHERE email = ? AND AdminID != ?");
         $check->execute([$email, $adminId]);
         if ($check->rowCount() > 0) {
@@ -38,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
     }
 }
 
-/* ── Change Password ── */
+// change password section
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'change_password') {
     $current  = $_POST['current_password'] ?? '';
     $new      = $_POST['new_password'] ?? '';
@@ -64,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'chan
     }
 }
 
-/* ── Add Admin ── */
+// add new admin section
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_admin') {
     $newName  = trim($_POST['new_name']);
     $newEmail = trim($_POST['new_email']);
@@ -87,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_
     }
 }
 
-/* ── Delete Admin ── */
+// delete admin section
 if (isset($_GET['delete_admin'])) {
     $delId = (int)$_GET['delete_admin'];
     if ($delId === $adminId) {
@@ -99,7 +97,7 @@ if (isset($_GET['delete_admin'])) {
     }
 }
 
-/* ── Fetch data ── */
+// fetch current admin data
 $me     = $pdo->prepare("SELECT * FROM admin WHERE AdminID = ?");
 $me->execute([$adminId]);
 $me     = $me->fetch(PDO::FETCH_ASSOC);

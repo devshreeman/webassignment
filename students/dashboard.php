@@ -1,22 +1,28 @@
 <?php
+// start session and connect to database
 session_start();
 include('../config/db.php');
 
+// make sure student is logged in
 if (!isset($_SESSION['student'])) {
     header('Location: login.php');
     exit;
 }
 
+// grab student info from session
 $studentId = $_SESSION['student']['StudentID'];
 $studentName = $_SESSION['student']['FullName'];
 
+// setup message variables
 $message = '';
 $msgType = '';
 
+// handle removing an interest
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'remove_interest') {
     $interestId = intval($_POST['interestId'] ?? 0);
     
     try {
+        // delete the interest record
         $stmt = $pdo->prepare("DELETE FROM interestedstudents WHERE InterestID = ? AND StudentID = ?");
         $stmt->execute([$interestId, $studentId]);
         
@@ -33,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'remo
     }
 }
 
+// load all programme interests for this student
 try {
     $stmt = $pdo->prepare("
         SELECT i.InterestID, p.ProgrammeName, l.LevelName, i.RegisteredAt

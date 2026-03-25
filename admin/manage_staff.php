@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bio   = trim($_POST['Bio']);
     $pass  = trim($_POST['Password'] ?? '');
     
-    /* Handle Photo Upload */
+    // handle photo upload if provided
     $photoPath = '';
     if (isset($_FILES['Photo']) && $_FILES['Photo']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['Photo']['tmp_name'];
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/* Handle Staff Deletion */
+// handle staff deletion
 if (isset($_GET['delete'])) {
     $sid = (int)$_GET['delete'];
     try {

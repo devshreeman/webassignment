@@ -37,12 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name  = trim($_POST['StudentName'] ?? '');
     $email = trim($_POST['Email'] ?? '');
 
-    /* Validate Input */
+    // validate the form inputs
     if (empty($name))              $errors[] = 'Please enter your full name.';
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Please enter a valid email address.';
 
     if (empty($errors)) {
-        /* Check for Duplicate Registration */
+        // check if already registered for this programme
         $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM interestedstudents WHERE ProgrammeID = ? AND StudentID = ?");
         $checkStmt->execute([$progId, $studentId]);
         

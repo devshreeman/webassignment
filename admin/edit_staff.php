@@ -1,27 +1,32 @@
 <?php
+// connect to database and setup page
 include('../config/db.php');
 $pageTitle         = 'Edit Staff Member';
 $activeSidebarItem = 'staff';
 include('../includes/admin_header.php');
 
+// get staff ID from URL
 $id = (int)($_GET['id'] ?? 0);
 if (!$id) { header("Location: manage_staff.php"); exit; }
 
+// load staff member data
 $s = $pdo->prepare("SELECT * FROM staff WHERE StaffID = ?");
 $s->execute([$id]);
 $staffMember = $s->fetch(PDO::FETCH_ASSOC);
 if (!$staffMember) { header("Location: manage_staff.php"); exit; }
 
+// setup message variables
 $msg = '';
 $msgType = 'success';
 
+// handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name  = trim($_POST['Name']);
     $email = trim($_POST['Email']);
     $bio   = trim($_POST['Bio']);
     $pass  = trim($_POST['Password'] ?? '');
 
-    /* Handle Photo Upload */
+    // handle photo upload if provided
     $photoPath = $staffMember['Photo'] ?? '';
     if (isset($_FILES['Photo']) && $_FILES['Photo']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['Photo']['tmp_name'];
@@ -36,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
+        // update staff with or without password change
         if ($pass) {
             $hash = password_hash($pass, PASSWORD_DEFAULT);
             $pdo->prepare("UPDATE staff SET Name=?, Email=?, Bio=?, Photo=?, password=? WHERE StaffID=?")
@@ -46,6 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $msg = 'Staff member updated successfully.';
         $msgType = 'success';
+        
+        // reload staff data to show updates
         $s->execute([$id]);
         $staffMember = $s->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -54,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/* Fetch Modules Led by This Staff Member */
+// get modules led by this staff member
 $led = $pdo->prepare("
     SELECT m.ModuleName, p.ProgrammeName
     FROM modules m

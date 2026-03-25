@@ -1,4 +1,5 @@
 <?php
+// page setup for accessibility statement
 $pageTitle  = 'Accessibility Statement';
 $activePage = '';
 $cssBase    = '../';

@@ -1,16 +1,20 @@
 <?php
+// connect to database
 include('../config/db.php');
 
+// make sure session is started and staff is logged in
 if (session_status() === PHP_SESSION_NONE) session_start();
 if (!isset($_SESSION['staff'])) {
     header("Location: login.php");
     exit;
 }
 
+// grab staff ID and setup messages
 $staffId = $_SESSION['staff']['StaffID'];
 $message = '';
 $msgType = '';
 
+// load current staff info
 try {
     $stmt = $pdo->prepare("SELECT Name, Email, Phone, Photo FROM staff WHERE StaffID = ?");
     $stmt->execute([$staffId]);
@@ -21,14 +25,17 @@ try {
     $msgType = 'error';
 }
 
+// handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['_action'] ?? '';
     
+    // update profile info
     if ($action === 'update_profile') {
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         
+        // validate required fields
         if (empty($name) || empty($email)) {
             $message = 'Name and email are required.';
             $msgType = 'error';
@@ -37,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msgType = 'error';
         } else {
             try {
+                // check if email is already taken by another staff member
                 $stmt = $pdo->prepare("SELECT StaffID FROM staff WHERE Email = ? AND StaffID != ?");
                 $stmt->execute([$email, $staffId]);
                 
@@ -44,12 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $message = 'This email is already in use by another staff member.';
                     $msgType = 'error';
                 } else {
+                    // update staff profile
                     $stmt = $pdo->prepare("UPDATE staff SET Name = ?, Email = ?, Phone = ? WHERE StaffID = ?");
                     $stmt->execute([$name, $email, $phone, $staffId]);
                     
+                    // update session with new info
                     $_SESSION['staff']['Name'] = $name;
                     $_SESSION['staff']['Email'] = $email;
                     
+                    // update local variable too
                     $staff['Name'] = $name;
                     $staff['Email'] = $email;
                     $staff['Phone'] = $phone;
@@ -63,15 +74,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } elseif ($action === 'upload_photo') {
+        // handle photo upload
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['photo'];
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             $maxSize = 5 * 1024 * 1024;
             
+            // check file type for security
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mimeType = finfo_file($finfo, $file['tmp_name']);
             finfo_close($finfo);
             
+            // validate file type and size
             if (!in_array($mimeType, $allowedTypes)) {
                 $message = 'Invalid file type. Only JPG, PNG, GIF, and WebP are allowed.';
                 $msgType = 'error';
@@ -79,19 +93,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = 'File size exceeds 5MB limit.';
                 $msgType = 'error';
             } else {
+                // generate unique filename
                 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $filename = 'staff_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $extension;
                 $uploadPath = '../uploads/staff/' . $filename;
                 
+                // make sure upload directory exists
                 if (!is_dir('../uploads/staff')) {
                     mkdir('../uploads/staff', 0755, true);
                 }
                 
+                // move uploaded file
                 if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                    // delete old photo if it exists
                     if (!empty($staff['Photo']) && file_exists('../uploads/staff/' . $staff['Photo'])) {
                         unlink('../uploads/staff/' . $staff['Photo']);
                     }
                     
+                    // update database with new photo
                     $stmt = $pdo->prepare("UPDATE staff SET Photo = ? WHERE StaffID = ?");
                     $stmt->execute([$filename, $staffId]);
                     
@@ -109,12 +128,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msgType = 'error';
         }
     } elseif ($action === 'remove_photo') {
+        // handle photo removal
         if (!empty($staff['Photo'])) {
             $photoPath = '../uploads/staff/' . $staff['Photo'];
             if (file_exists($photoPath)) {
                 unlink($photoPath);
             }
             
+            // clear photo from database
             $stmt = $pdo->prepare("UPDATE staff SET Photo = NULL WHERE StaffID = ?");
             $stmt->execute([$staffId]);
             
@@ -124,10 +145,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msgType = 'success';
         }
     } elseif ($action === 'change_password') {
+        // handle password change
         $currentPassword = $_POST['currentPassword'] ?? '';
         $newPassword = $_POST['newPassword'] ?? '';
         $confirmPassword = $_POST['confirmPassword'] ?? '';
         
+        // validate password fields
         if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
             $message = 'All password fields are required.';
             $msgType = 'error';
@@ -139,11 +162,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msgType = 'error';
         } else {
             try {
+                // verify current password is correct
                 $stmt = $pdo->prepare("SELECT password FROM staff WHERE StaffID = ?");
                 $stmt->execute([$staffId]);
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($row && password_verify($currentPassword, $row['password'])) {
+                    // hash and save new password
                     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     $stmt = $pdo->prepare("UPDATE staff SET password = ? WHERE StaffID = ?");
                     $stmt->execute([$hashedPassword, $staffId]);

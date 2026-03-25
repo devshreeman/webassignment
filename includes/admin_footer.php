@@ -1,7 +1,5 @@
 <?php
-/**
- * Shared Admin Footer — closes the admin layout
- */
+// admin footer - closes the admin layout
 ?>
   </main><!-- /.admin-main -->
 </div><!-- /.admin-layout -->

@@ -1,7 +1,9 @@
 <?php
+// start session and connect to database
 session_start();
 include('../config/db.php');
 
+// handle signup form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
@@ -10,17 +12,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm) {
         $error = "Passwords do not match!";
     } else {
-        /* Hash the password */
+        // hash the password for security
         $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        /* Check if admin already exists */
+        // check if admin already exists
         $stmt = $pdo->query("SELECT COUNT(*) FROM admin");
         $count = $stmt->fetchColumn();
 
         if ($count > 0) {
             $error = "An admin already exists! Only one admin account is allowed.";
         } else {
-            /* Insert new admin */
+            // create new admin account
             $stmt = $pdo->prepare("INSERT INTO admin (email, password) VALUES (?, ?)");
             $stmt->execute([$email, $hashed]);
             $success = "Admin account created successfully! You can now log in.";

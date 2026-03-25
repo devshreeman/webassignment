@@ -1,25 +1,31 @@
 <?php
+// connect to database
 include('../config/db.php');
 
+// make sure session is started and staff is logged in
 if (session_status() === PHP_SESSION_NONE) session_start();
 if (!isset($_SESSION['staff'])) {
     header("Location: login.php");
     exit;
 }
 
+// grab staff ID and filter options
 $staffId = $_SESSION['staff']['StaffID'];
 $filterProgramme = intval($_GET['prog'] ?? 0);
 $export = $_GET['export'] ?? '';
 
 try {
+    // build query to get interested students for this staff member's modules
     $programmeFilter = '';
     $params = [$staffId];
     
+    // add programme filter if selected
     if ($filterProgramme > 0) {
         $programmeFilter = ' AND p.ProgrammeID = ?';
         $params[] = $filterProgramme;
     }
     
+    // get all interested students for programmes containing this staff's modules
     $stmt = $pdo->prepare("
         SELECT 
             i.InterestID,
@@ -43,16 +49,20 @@ try {
     $stmt->execute($params);
     $interestedStudents = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // handle CSV export if requested
     if ($export === '1') {
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="interested_students_' . date('Y-m-d') . '.csv"');
         
         $output = fopen('php://output', 'w');
         
+        // add UTF-8 BOM for Excel compatibility
         fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
         
+        // write CSV headers
         fputcsv($output, ['Name', 'Email', 'Programme', 'Registration Date']);
         
+        // write student data
         foreach ($interestedStudents as $student) {
             fputcsv($output, [
                 $student['StudentName'],
@@ -66,6 +76,7 @@ try {
         exit;
     }
     
+    // get list of programmes for filter dropdown
     $stmtProgrammes = $pdo->prepare("
         SELECT DISTINCT p.ProgrammeID, p.ProgrammeName
         FROM programmes p

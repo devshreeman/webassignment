@@ -4,14 +4,14 @@ include('../config/db.php');
 $pageTitle         = 'Admin Login';
 $activeSidebarItem = '';
 
-/* Redirect if Already Logged In */
+// redirect if already logged in
 if (session_status() === PHP_SESSION_NONE) session_start();
 if (isset($_SESSION['admin'])) {
     header("Location: dashboard.php");
     exit;
 }
 
-/* Handle Login Form Submission */
+// handle login form submission
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email'] ?? '');
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         $errors[] = 'Please enter both email and password.';
     } else {
-        /* Query Admin Table */
+        // look up admin account by email
         $stmt = $pdo->prepare("SELECT * FROM admin WHERE email = ?");
         $stmt->execute([$email]);
         $admin = $stmt->fetch(PDO::FETCH_ASSOC);

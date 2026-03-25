@@ -1,17 +1,21 @@
 <?php
+// grab database connection
 include('../config/db.php');
 
+// get all staff members sorted by name
 $staff = $pdo->query("
     SELECT StaffID, Name, Email, Photo
     FROM staff
     ORDER BY Name
 ")->fetchAll(PDO::FETCH_ASSOC);
 
+// page setup
 $pageTitle  = 'Our Academic Staff';
 $activePage = 'staff';
 $cssBase    = '../';
 $rootBase   = '../';
 
+// helper function to generate initials for staff without photos
 function staffInitials($name) {
     $parts = explode(' ', trim($name));
     $i = strtoupper(substr($parts[0], 0, 1));

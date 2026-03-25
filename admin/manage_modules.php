@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/* Handle Module Deletion */
+// handle module deletion
 if (isset($_GET['delete'])) {
     $mid = (int)$_GET['delete'];
     try {

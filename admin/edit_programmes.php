@@ -18,7 +18,7 @@ if (!$id) {
 $msg     = '';
 $msgType = 'success';
 
-/* ── Handle Programme Update ── */
+// handle programme update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'update_programme') {
     $name     = trim($_POST['ProgrammeName'] ?? '');
     $desc     = trim($_POST['Description'] ?? '');
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
     $image    = null;
     $updateImage = false;
 
-    /* Handle Image Upload */
+    // handle image upload if provided
     if (isset($_FILES['Image']) && $_FILES['Image']['error'] === UPLOAD_ERR_OK) {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $maxSize = 5 * 1024 * 1024; // 5MB
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
             $uploadPath = $uploadDir . $filename;
             
             if (move_uploaded_file($_FILES['Image']['tmp_name'], $uploadPath)) {
-                /* Delete old image if exists */
+                // delete old image if it exists
                 $oldImage = $pdo->prepare("SELECT Image FROM programmes WHERE ProgrammeID = ?");
                 $oldImage->execute([$id]);
                 $oldImagePath = $oldImage->fetchColumn();
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
         }
     }
 
-    /* Handle Image Removal */
+    // handle image removal if requested
     if (isset($_POST['RemoveImage']) && $_POST['RemoveImage'] === '1') {
         $oldImage = $pdo->prepare("SELECT Image FROM programmes WHERE ProgrammeID = ?");
         $oldImage->execute([$id]);
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
     }
 }
 
-/* ── Handle Add Module to this Programme ── */
+// handle adding new module to this programme
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_module') {
     $modName  = trim($_POST['ModuleName'] ?? '');
     $modDesc  = trim($_POST['ModuleDesc'] ?? '');
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_
     }
 }
 
-/* ── Handle Link Existing Module ── */
+// handle linking existing module
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'link_module') {
     $mid  = (int)($_POST['ExistingModuleID'] ?? 0);
     $year = !empty($_POST['YearLink']) ? (int)$_POST['YearLink'] : null;
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'link
     }
 }
 
-/* Handle Module Removal from Programme */
+// handle removing module from programme
 if (isset($_GET['remove_module'])) {
     $mid = (int)$_GET['remove_module'];
     try {
@@ -170,13 +170,13 @@ if (isset($_GET['msg'])) {
     $msgType = 'success';
 }
 
-/* ── Fetch Programme Data ── */
+// get programme data
 $progStmt = $pdo->prepare("SELECT p.*, l.LevelName FROM programmes p LEFT JOIN levels l ON p.LevelID = l.LevelID WHERE p.ProgrammeID = ?");
 $progStmt->execute([$id]);
 $prog = $progStmt->fetch(PDO::FETCH_ASSOC);
 if (!$prog) { header("Location: manage_programmes.php"); exit; }
 
-/* ── Fetch Modules (grouped by year) ── */
+// get modules for this programme (grouped by year)
 $modStmt = $pdo->prepare("
     SELECT m.ModuleID, m.ModuleName, m.Description, pm.Year,
            s.Name AS LeaderName
@@ -196,12 +196,12 @@ foreach ($modules as $m) {
 }
 ksort($modulesByYear);
 
-/* ── Fetch Available Modules to Link ── */
+// get available modules that can be linked
 $allMods = $pdo->prepare("SELECT ModuleID, ModuleName FROM modules WHERE ModuleID NOT IN (SELECT ModuleID FROM programmemodules WHERE ProgrammeID = ?) ORDER BY ModuleName");
 $allMods->execute([$id]);
 $availableModules = $allMods->fetchAll(PDO::FETCH_ASSOC);
 
-/* ── Reference Data ── */
+// get reference data (levels and staff)
 $levels = $pdo->query("SELECT * FROM levels ORDER BY LevelName")->fetchAll(PDO::FETCH_ASSOC);
 $staff  = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
 $duration = (int)($prog['Duration'] ?? 3);

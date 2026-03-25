@@ -1,15 +1,19 @@
 <?php
+// start session and connect to database
 session_start();
 include('../config/db.php');
 
+// setup messages
 $error = '';
 $success = '';
 $redirectMessage = $_SESSION['redirect_message'] ?? '';
 unset($_SESSION['redirect_message']);
 
+// check if we need to redirect after registration
 $redirectTo = $_GET['redirect'] ?? '';
 $progId = intval($_GET['prog'] ?? 0);
 
+// handle registration form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName = trim($_POST['fullName'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -17,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirmPassword'] ?? '';
     
+    // validate all required fields
     if (empty($fullName) || empty($email) || empty($password) || empty($confirmPassword)) {
         $error = 'All fields except phone are required.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -27,19 +32,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Passwords do not match.';
     } else {
         try {
+            // check if email is already registered
             $stmt = $pdo->prepare("SELECT StudentID FROM students WHERE Email = ?");
             $stmt->execute([$email]);
             
             if ($stmt->rowCount() > 0) {
                 $error = 'An account with this email already exists.';
             } else {
+                // hash password for security
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
                 
+                // create new student account
                 $stmt = $pdo->prepare("INSERT INTO students (FullName, Email, Phone, Password) VALUES (?, ?, ?, ?)");
                 $stmt->execute([$fullName, $email, $phone, $hashedPassword]);
                 
                 $studentId = $pdo->lastInsertId();
                 
+                // log them in automatically
                 session_regenerate_id(true);
                 $_SESSION['student'] = [
                     'StudentID' => $studentId,
@@ -47,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'Email' => $email
                 ];
                 
+                // redirect to where they were trying to go, or dashboard
                 if ($redirectTo === 'register_interest' && $progId > 0) {
                     header("Location: ../public/register_interest.php?id=$progId");
                 } else {

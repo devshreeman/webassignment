@@ -1,8 +1,6 @@
 <?php
-/**
- * Database Setup & Migration Script
- * Run this after importing example-data.sql to add all required columns and tables
- */
+// database setup and migration script
+// run this after importing example-data.sql to add all required columns and tables
 include('../config/db.php');
 
 $errors = [];

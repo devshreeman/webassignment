@@ -1,15 +1,19 @@
 <?php
+// connect to database and setup page
 include('../config/db.php');
 $pageTitle         = 'Edit Module';
 $activeSidebarItem = 'modules';
 include('../includes/admin_header.php');
 
+// get module ID from URL
 $id = (int)($_GET['id'] ?? 0);
 if (!$id) { header("Location: manage_modules.php"); exit; }
 
+// setup message variables
 $msg = '';
 $msgType = 'success';
 
+// handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name     = trim($_POST['ModuleName'] ?? '');
     $desc     = trim($_POST['Description'] ?? '');
@@ -30,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// load module data
 $mod  = $pdo->prepare("
     SELECT m.*, pm.Year
     FROM modules m
@@ -39,6 +44,8 @@ $mod  = $pdo->prepare("
 ");
 $mod->execute([$id]);
 $mod   = $mod->fetch(PDO::FETCH_ASSOC);
+
+// get all staff for dropdown
 $staff = $pdo->query("SELECT StaffID, Name FROM staff ORDER BY Name")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 

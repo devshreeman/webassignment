@@ -1,4 +1,5 @@
 <?php
+// page setup for privacy policy
 $pageTitle  = 'Privacy Policy';
 $activePage = '';
 $cssBase    = '../';

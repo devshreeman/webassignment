@@ -1,32 +1,41 @@
 <?php
+// start session and connect to database
 session_start();
 include('../config/db.php');
 
+// if already logged in, send them to dashboard
 if (isset($_SESSION['student'])) {
     header('Location: dashboard.php');
     exit;
 }
 
+// setup error and redirect messages
 $error = '';
 $redirectMessage = $_SESSION['redirect_message'] ?? '';
 unset($_SESSION['redirect_message']);
 
+// check if we need to redirect after login
 $redirectTo = $_GET['redirect'] ?? '';
 $progId = intval($_GET['prog'] ?? 0);
 
+// handle login form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     
+    // make sure both fields are filled
     if (empty($email) || empty($password)) {
         $error = 'Please enter both email and password.';
     } else {
         try {
+            // look up student by email
             $stmt = $pdo->prepare("SELECT StudentID, FullName, Email, Password FROM students WHERE Email = ?");
             $stmt->execute([$email]);
             $student = $stmt->fetch(PDO::FETCH_ASSOC);
             
+            // check if student exists and password matches
             if ($student && password_verify($password, $student['Password'])) {
+                // create new session for security
                 session_regenerate_id(true);
                 $_SESSION['student'] = [
                     'StudentID' => $student['StudentID'],
@@ -34,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'Email' => $student['Email']
                 ];
                 
+                // redirect to where they were trying to go, or dashboard
                 if ($redirectTo === 'register_interest' && $progId > 0) {
                     header("Location: ../public/register_interest.php?id=$progId");
                 } else {

@@ -1,9 +1,5 @@
 <?php
-/**
- * Shared Public Footer
- */
-
-/* Determine Base Path */
+// figure out the base path and current year
 $footerBase = isset($rootBase) ? $rootBase . 'public/' : '../public/';
 $year = date('Y');
 ?>

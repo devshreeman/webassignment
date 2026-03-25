@@ -1,12 +1,8 @@
 <?php
-/**
- * Shared Public Header
- */
-
-/* Initialize Session */
+// start session if not already started
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-/* Set Default Variables */
+// set default values if not already set
 $pageTitle   = $pageTitle   ?? 'Student Course Hub';
 $activePage  = $activePage  ?? '';
 $cssBase     = $cssBase     ?? '../';

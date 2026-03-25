@@ -1,7 +1,5 @@
 <?php
-/**
- * Unified Admin Header — handles session_start safely.
- */
+// admin header - handles session and access control
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -9,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $pageTitle         = $pageTitle         ?? 'Admin Panel';
 $activeSidebarItem = $activeSidebarItem ?? '';
 
-/* Access Control: Require Admin Session */
+// make sure user is logged in as admin
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit;

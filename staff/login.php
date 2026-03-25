@@ -4,14 +4,14 @@ include('../config/db.php');
 $pageTitle         = 'Staff Login';
 $activePage        = 'staff-login';
 
-/* Redirect if Already Logged In */
+// redirect if already logged in
 if (session_status() === PHP_SESSION_NONE) session_start();
 if (isset($_SESSION['staff'])) {
     header("Location: dashboard.php");
     exit;
 }
 
-/* Handle Login Form Submission */
+// handle login form submission
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email'] ?? '');
@@ -20,12 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         $errors[] = 'Please enter both email and password.';
     } else {
-        /* Query Staff Table */
+        // look up staff member by email
         $stmt = $pdo->prepare("SELECT * FROM staff WHERE Email = ?");
         $stmt->execute([$email]);
         $staff = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        /* Verify Staff Credentials */
+        // verify staff credentials and password
         if ($staff && !empty($staff['password']) && password_verify($password, $staff['password'])) {
             $_SESSION['staff'] = [
                 'StaffID' => $staff['StaffID'],

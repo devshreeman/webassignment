@@ -12,7 +12,7 @@ include('../includes/admin_header.php');
 $msg     = '';
 $msgType = 'success';
 
-/* Handle Form Actions */
+// handle form actions (add/edit programme)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['_action'] ?? '';
 
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pub      = isset($_POST['IsPublished']) ? 1 : 0;
         $image    = null;
 
-        /* Handle Image Upload */
+        // handle image upload if provided
         if (isset($_FILES['Image']) && $_FILES['Image']['error'] === UPLOAD_ERR_OK) {
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             $maxSize = 5 * 1024 * 1024; // 5MB
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/* Handle Programme Deletion */
+// handle programme deletion
 if (isset($_GET['delete'])) {
     $pid = (int)$_GET['delete'];
     try {
