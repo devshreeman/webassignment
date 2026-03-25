@@ -1,55 +1,83 @@
-# University of Liverpool - Student Course Hub
+# Student Course Hub
 
-A comprehensive web application for managing university programmes, modules, staff, and student interests. Built with PHP and MySQL.
+A web application for marketing university degree programmes and collecting prospective student interest data.
 
-## Features
+## Project Information
 
-### Public Portal
-- Browse undergraduate and postgraduate programmes
-- View detailed programme information with modules
-- View staff profiles and contact information
-- Register interest in programmes (requires student account)
-- Accessible and responsive design (WCAG 2.1 AA compliant)
+**Course**: CTEC2712 - Web Application Development  
+**Project Type**: Group Assignment  
+**Institution**: De Montfort University 
+**Academic Year**: 2025/2026
+
+## Project Scenario
+
+This application was developed for a UK university requiring a system to market undergraduate and postgraduate degree programmes to prospective students. The primary purpose is to collect contact details of prospective students interested in specific degree programmes, enabling the university to send targeted communications about:
+
+- Open days and campus events
+- Application deadlines
+- Programme updates and changes
+- Course-specific information
+
+The system generates mailing lists that indicate exactly which programmes each student has expressed interest in, allowing for precise and relevant communication.
+
+## Core Features
+
+### Public-Facing Portal
+- **Programme Browsing**: View undergraduate and postgraduate programmes with filtering by level
+- **Programme Details**: Detailed information including modules, staff, entry requirements, and career prospects
+- **Staff Profiles**: View academic staff members with photos, biographies, and contact information
+- **Interest Registration**: Prospective students can register interest in multiple programmes
+- **Contact Form**: General enquiry form for prospective students
+- **Responsive Design**: Fully responsive layout optimized for mobile, tablet, and desktop
+- **Accessibility**: WCAG 2.1 AA compliant for inclusive access
 
 ### Student Portal
-- Create student account and login
-- Register interest in multiple programmes
-- Manage programme interests from dashboard
-- Update profile information and password
-- View registered interests with programme details
+- **Self-Registration**: Prospective students can create accounts independently
+- **Secure Authentication**: Login system with password hashing and session management
+- **Interest Management**: Register interest in multiple programmes and manage selections
+- **Dashboard**: View all registered programme interests in one place
+- **Profile Management**: Update personal information and change password
 
 ### Staff Portal
-- Secure staff login with password authentication
-- View modules you lead and related programmes
-- Track students interested in your programmes
-- Filter interested students by programme
-- Export student interest data to CSV
-- Update profile information, photo, and password
+- **Module Leader Access**: Staff can view modules they lead
+- **Student Interest Tracking**: View prospective students interested in their programmes
+- **Programme Filtering**: Filter interested students by specific programmes
+- **CSV Export**: Export mailing lists of interested students for targeted communications
+- **Profile Management**: Update personal information, upload photo, and change password
 
 ### Admin Panel
-- Complete programme management (create, edit, publish/draft)
-- Module management with staff assignment
-- Staff member management with photos
-- View student interest registrations
-- Dashboard with statistics and insights
-- Contact form message management
+- **Programme Management**: Create, edit, publish/unpublish programmes with images
+- **Module Management**: Create and assign modules to programmes by year
+- **Staff Management**: Add staff members with photos, biographies, and module assignments
+- **Interest Analytics**: View dashboard with statistics on student interests
+- **Mailing List Generation**: View and export lists of interested students by programme
+- **Contact Message Management**: Review and respond to enquiries from contact form
+- **Database Tools**: Setup and migration utilities for database management
 
 ## Technology Stack
 
-- **Backend**: PHP 7.4+
-- **Database**: MySQL 5.7+
-- **Frontend**: Vanilla JavaScript, Custom CSS
-- **Server**: Apache (XAMPP recommended for local development)
+- **Backend**: PHP 7.4+ (no frameworks - vanilla PHP)
+- **Database**: MySQL 5.7+ with PDO for database interactions
+- **Frontend**: Vanilla JavaScript (no jQuery or frameworks), Custom CSS (no Bootstrap or Tailwind)
+- **Server**: Apache web server with mod_rewrite
+- **Development Environment**: XAMPP/MAMP/LAMP stack recommended
+
+### Design Approach
+- **No Frameworks**: Built entirely with vanilla PHP, JavaScript, and CSS as per assignment requirements
+- **Custom CSS**: All styling written from scratch using CSS custom properties (variables)
+- **Semantic HTML**: Proper HTML5 semantic elements throughout
+- **Progressive Enhancement**: Core functionality works without JavaScript
+- **Mobile-First**: Responsive design built with mobile devices as priority
 
 ## Installation
 
 ### Prerequisites
 - PHP 7.4 or higher
 - MySQL 5.7 or higher
-- Apache web server
-- XAMPP (recommended) or similar LAMP/WAMP stack
+- Apache web server (with mod_rewrite enabled)
+- XAMPP (recommended) or similar LAMP/WAMP/MAMP stack
 
-### Setup Instructions
+### Quick Setup
 
 1. **Clone or download the project**
    ```bash
@@ -67,22 +95,24 @@ A comprehensive web application for managing university programmes, modules, sta
    ```
 
 3. **Import database**
-   - Option A: Use phpMyAdmin
+   - **Option A**: Use phpMyAdmin
      - Open phpMyAdmin
      - Create a new database named `student_course_hub`
      - Import `example-data.sql`
    
-   - Option B: Use command line
+   - **Option B**: Use command line
      ```bash
      mysql -u root -p < example-data.sql
      ```
 
-4. **Run database migrations**
+4. **Run database setup (Important!)**
    - Visit: `http://localhost/studenthub/admin/setup_database.php`
-   - This will add all required columns and tables
+   - This will automatically add all required columns and tables
+   - Fixes auto-increment issues for Staff and Modules tables
+   - Creates admin, students, and contact_messages tables
    - Follow the on-screen instructions
 
-5. **Set up file permissions**
+5. **Set up file permissions** (Linux/Mac only)
    ```bash
    chmod 755 uploads/
    chmod 755 uploads/staff/
@@ -94,21 +124,26 @@ A comprehensive web application for managing university programmes, modules, sta
    - Staff portal: `http://localhost/studenthub/staff/`
    - Student portal: `http://localhost/studenthub/students/`
 
-## Default Credentials
+## Default Credentials (For Testing)
 
 ### Admin Account
+After running the database setup:
 - **Email**: admin@liverpool.ac.uk
 - **Password**: admin123
-- Create admin account via: `admin/signup.php`
+- **Access**: Full system administration
+- **Note**: For demonstration purposes only - change in production
 
 ### Staff Accounts
-- Staff members need to be created by admin
-- Default password format: `password123` (change after first login)
+- Staff members are created by admin through the admin panel
+- Staff need passwords set through admin panel or database
 - Email format: `firstname.lastname@liverpool.ac.uk`
+- Sample staff data included in `example-data.sql` (20 staff members)
 
 ### Student Accounts
-- Students can self-register at: `students/register.php`
+- Students self-register at: `students/register.php`
 - Minimum password length: 8 characters
+- Email validation and duplicate checking included
+- Sample interested students included in database
 
 ## Project Structure
 
@@ -159,136 +194,186 @@ studenthub/
 │   └── university.css
 ├── uploads/            # User-uploaded files
 │   └── staff/
+├── assets/             # Logo and favicon files
 ├── example-data.sql    # Sample database with data
-├── migration-update.sql # Database migration script
-└── DATABASE_SETUP_GUIDE.md # Detailed setup guide
+└── README.md           # This file
 ```
 
 ## Database Schema
 
 ### Main Tables
 - **levels** - Programme levels (Undergraduate, Postgraduate)
-- **staff** - Staff members with authentication
-- **modules** - Course modules with leaders
-- **programmes** - Degree programmes
-- **programmemodules** - Module assignments to programmes
-- **students** - Student accounts
-- **interestedstudents** - Student interest registrations
-- **admin** - Admin user accounts
-- **contact_messages** - Contact form submissions
+- **staff** - Staff members with authentication, photos, and biographies
+- **modules** - Course modules with descriptions and module leaders
+- **programmes** - Degree programmes with images and publish status
+- **programmemodules** - Module assignments to programmes by year
+- **students** - Student accounts with authentication
+- **interestedstudents** - Student interest registrations (links students to programmes)
+- **admin** - Admin user accounts with authentication
+- **contact_messages** - Contact form submissions with read status
 
-## Key Features Explained
+### Sample Data Included (for demonstration)
+- **20 staff members** across various departments (Computer Science, Engineering, Business, etc.)
+- **31 modules** covering different subject areas
+- **10 programmes** (5 undergraduate, 5 postgraduate)
+- **Programme-module relationships** showing which modules belong to which programmes
+- **4 sample interested students** demonstrating the interest registration system
+- **1 admin account** for system administration
 
-### Programme Management
-- Create programmes with levels (UG/PG)
-- Assign programme leaders
-- Add/remove modules to programmes by year
-- Publish or save as draft
-- Upload programme images
+## Key Assignment Requirements Met
 
-### Module Management
-- Create modules with descriptions
-- Assign module leaders from staff
-- Link modules to multiple programmes
-- Track which programmes use each module
+### Mailing List Generation
+The application fulfills the core requirement of generating mailing lists that indicate exactly which programmes each prospective student has expressed interest in:
 
-### Interest Registration
-- Students must create account to register interest
-- Track registration dates
-- Staff can view interested students for their programmes
-- Export functionality for staff
+- **Interest Tracking**: Each student interest is linked to specific programmes
+- **CSV Export**: Staff and admin can export interested student data to CSV format
+- **Programme Filtering**: Filter mailing lists by specific programmes
+- **Contact Details**: Captures student name, email, and programme interests
+- **Targeted Communications**: Enables sending programme-specific information to interested students
 
-### Authentication System
-- Three separate authentication systems:
-  - Admin (full access)
-  - Staff (view own modules/programmes)
-  - Students (manage own interests)
-- Password hashing with PHP password_hash()
-- Session-based authentication
-- Secure logout functionality
+### Data Management
+- **Programme Information**: Comprehensive programme details including modules, staff, and requirements
+- **Module Structure**: Modules organized by year and linked to programmes
+- **Staff Profiles**: Academic staff with module leadership assignments
+- **Student Interests**: Many-to-many relationship between students and programmes
+
+### User Roles & Authentication
+Three distinct user types with appropriate access levels:
+- **Admin**: Full system access for managing all content and users
+- **Staff**: View modules they lead and interested students for their programmes
+- **Students**: Register interest in programmes and manage their selections
+
+### Security Implementation
+- Password hashing using PHP's `password_hash()` with bcrypt
+- Prepared statements for all database queries (SQL injection prevention)
+- Session-based authentication with session regeneration
+- Input validation and output escaping (XSS prevention)
+- Role-based access control
 
 ## Security Features
 
-- Password hashing using PHP's password_hash()
-- Prepared statements for all database queries
-- Session management with regeneration
-- Input validation and sanitization
-- XSS protection with htmlspecialchars()
-- File upload validation (type, size)
-- CSRF protection ready (can be enhanced)
+- **Password Security**: All passwords hashed using PHP's `password_hash()` with bcrypt
+- **SQL Injection Protection**: Prepared statements for all database queries
+- **Session Security**: Session management with regeneration on login
+- **Input Validation**: Server-side validation for all user inputs
+- **XSS Protection**: Output escaping with `htmlspecialchars()` on all user-generated content
+- **File Upload Security**: Type validation, size limits, and secure filename generation
+- **Authentication**: Separate authentication systems for admin, staff, and students
+- **Access Control**: Role-based access control for different user types
 
-## Customization
+## Assignment Deliverables
 
-### Branding
-- Update university name in `includes/header.php`
-- Modify colors in `css/university.css` (CSS custom properties)
-- Replace logo in navigation
+### Functional Requirements
+✅ **Programme Marketing**: Public-facing pages to showcase degree programmes  
+✅ **Interest Collection**: System to capture prospective student contact details  
+✅ **Mailing List Generation**: Export functionality for programme-specific mailing lists  
+✅ **Multi-Programme Interest**: Students can express interest in multiple programmes  
+✅ **Targeted Communications**: Filter and export by specific programmes  
+✅ **Content Management**: Admin panel for managing programmes, modules, and staff  
+✅ **User Authentication**: Secure login systems for admin, staff, and students  
+✅ **Data Relationships**: Proper database design with foreign keys and relationships
 
-### Email Configuration
-- Staff emails generated as: `firstname.lastname@liverpool.ac.uk`
-- Update domain in `admin/setup_database.php` if needed
-
-### File Upload Limits
-- Programme images: 5MB max
-- Staff photos: 5MB max
-- Allowed formats: JPG, PNG, GIF, WebP
-- Configure in respective management pages
+### Technical Requirements
+✅ **No Frameworks**: Built with vanilla PHP, JavaScript, and CSS  
+✅ **Database Design**: Normalized MySQL database with proper relationships  
+✅ **Security**: Password hashing, prepared statements, input validation  
+✅ **Responsive Design**: Mobile-first responsive layout  
+✅ **Accessibility**: WCAG 2.1 AA compliance  
+✅ **Code Quality**: Clean, commented, maintainable code  
+✅ **Error Handling**: Proper error handling and user feedback
 
 ## Troubleshooting
 
 ### Database Connection Issues
 - Check credentials in `config/db.php`
-- Ensure MySQL service is running
-- Verify database exists
+- Ensure MySQL service is running (start XAMPP/MAMP)
+- Verify database `student_course_hub` exists
+- Check PDO extension is enabled in PHP
+
+### "Cannot add staff/modules" Error
+- Run `admin/setup_database.php` to fix auto-increment
+- This is a known issue with the original schema
+- The setup script will fix it automatically
 
 ### File Upload Issues
-- Check folder permissions: `chmod 755 uploads/`
-- Verify PHP upload_max_filesize in php.ini
-- Check post_max_size in php.ini
+- Check folder permissions: `chmod 755 uploads/` (Linux/Mac)
+- Verify PHP `upload_max_filesize` in php.ini (default: 5MB)
+- Check `post_max_size` in php.ini
+- Ensure `uploads/` and `uploads/staff/` directories exist
 
 ### Session Issues
-- Ensure session.save_path is writable
+- Ensure `session.save_path` is writable
 - Check PHP session configuration
-- Clear browser cookies
+- Clear browser cookies and cache
+- Verify session is started in PHP files
 
-### Duplicate Data Issues
-- Run `admin/setup_database.php` to fix schema
-- Check for duplicate entries in database
-- Review foreign key constraints
+### Page Not Found (404) Errors
+- Check that you're accessing the correct URL path
+- Ensure Apache mod_rewrite is enabled
+- Verify file permissions are correct
 
 ## Development
 
-### Adding New Features
-1. Follow existing code structure
-2. Use prepared statements for database queries
-3. Implement proper error handling
-4. Add input validation
-5. Test with different user roles
-
 ### Code Standards
-- Use meaningful variable names
-- Add comments for complex logic
-- Follow existing naming conventions
-- Maintain consistent indentation
-- Use htmlspecialchars() for output
+- **Comments**: Single-line `//` comments in PHP, `/* */` in CSS
+- **Security**: Always use prepared statements and `htmlspecialchars()`
+- **Naming**: Descriptive variable names, PascalCase for database columns
+- **Error Handling**: Try-catch blocks for database operations
+- **Validation**: Server-side validation for all user inputs
+- **Sessions**: Check authentication on protected pages
 
-## Support & Documentation
+### Adding New Features
+1. Follow existing code structure and patterns
+2. Use prepared statements for all database queries
+3. Implement proper error handling with try-catch
+4. Add input validation and sanitization
+5. Test with different user roles (admin, staff, student)
+6. Ensure responsive design for mobile devices
+7. Maintain accessibility standards (WCAG 2.1 AA)
 
-- **Setup Guide**: See `DATABASE_SETUP_GUIDE.md`
-- **Database Migrations**: Run `admin/setup_database.php`
-- **Accessibility**: WCAG 2.1 AA compliant
-- **Browser Support**: Modern browsers (Chrome, Firefox, Safari, Edge)
+## Technical Details
+
+### Responsive Design
+- Fully responsive layout for mobile, tablet, and desktop
+- Breakpoints: 320px, 480px, 640px, 1024px, 1440px
+- Touch-optimized with 44px minimum touch targets
+- Mobile-friendly navigation with hamburger menu
+- Horizontal scrolling data tables on mobile
+
+### Accessibility
+- WCAG 2.1 AA compliant
+- Semantic HTML structure
+- ARIA labels and attributes
+- Keyboard navigation support
+- Proper heading hierarchy
+- Color contrast ratios meet standards
+- Screen reader friendly
+
+### Browser Support
+- Chrome/Edge (Chromium) 90+
+- Firefox 88+
+- Safari 14+
+- Mobile Safari (iOS 14+)
+- Chrome Mobile (Android 10+)
+
+## Project Team
+
+This is a group assignment project for CTEC2712: Web Application Development.
+
+## Academic Context
+
+**Course**: CTEC2712 - Web Application Development  
+**Institution**: De Montfort University
+**Academic Year**: 2025/2026  
+**Project Type**: Group Assignment  
+**Scenario**: Student Course Hub for UK University
 
 ## License
 
-This project is developed for University of Liverpool.
-
-## Credits
-
-Developed as a student course management system for higher education institutions.
+This project is an academic assignment and is not affiliated with or endorsed by the University of Liverpool as an institution. It is developed solely for educational purposes.
 
 ---
 
 **Version**: 1.0  
 **Last Updated**: March 2026  
-**Institution**: University of Liverpool
+**Built with**: Vanilla PHP, MySQL, Vanilla JavaScript, Custom CSS (No Frameworks)
