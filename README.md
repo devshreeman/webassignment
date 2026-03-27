@@ -365,10 +365,10 @@ Three distinct user types with appropriate access levels:
 This is a group assignment project for CTEC2712: Web Application Development.
 
 ### Members
-- Shreeman Bhandari
-- Bibek Timsina
-- Suraj Rai
-- Rojal Karki
+- Shreeman Bhandari(Admin Backend Part)
+- Bibek Timsina(Public View Part)
+- Suraj Rai(Student and Staff Part)
+- Rojal Karki(All CSS Part)
 
 ## Academic Context
 
