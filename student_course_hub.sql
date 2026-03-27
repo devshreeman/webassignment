@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 25, 2026 at 11:39 AM
+-- Generation Time: Mar 27, 2026 at 08:55 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -81,7 +81,8 @@ INSERT INTO `interestedstudents` (`InterestID`, `StudentID`, `ProgrammeID`, `Stu
 (1, NULL, 1, 'John Doe', 'john.doe@example.com', '2026-03-23 16:37:56'),
 (2, NULL, 4, 'Jane Smith', 'jane.smith@example.com', '2026-03-23 16:37:56'),
 (3, NULL, 6, 'Alex Brown', 'alex.brown@example.com', '2026-03-23 16:37:56'),
-(4, NULL, 9, 'Priya Patel', 'priya.patel@example.com', '2026-03-23 16:37:56');
+(4, NULL, 9, 'Priya Patel', 'priya.patel@example.com', '2026-03-23 16:37:56'),
+(8, 6, 1, 'Shreeman Bhandari', 'shree@gmail.com', '2026-03-26 12:54:20');
 
 -- --------------------------------------------------------
 
@@ -321,7 +322,7 @@ INSERT INTO `staff` (`StaffID`, `Name`, `Email`, `Phone`, `Bio`, `Photo`, `passw
 (8, 'Dr. Henry Clark', 'henry.clark@liverpool.ac.uk', NULL, NULL, NULL, NULL),
 (9, 'Dr. Irene Hall', 'irene.hall@liverpool.ac.uk', NULL, NULL, NULL, NULL),
 (10, 'Dr. James Wright', 'james.wright@liverpool.ac.uk', NULL, NULL, NULL, NULL),
-(11, 'Dr. Sophia Miller', 'sophia.miller@liverpool.ac.uk', NULL, '', '', '$2y$10$scPaVLiGxB7XuYkm8HTG7eT890M3DAI.XREkL8YsHI/bt5Hv.qR8O'),
+(11, 'Dr. Sophia Miller', 'sophia.miller@liverpool.ac.uk', NULL, '', '', '$2y$10$r/1Hgwt5jqs174Kjm326nOlNtCItmlYf6LEkno0PrLAdrxxA48LUe'),
 (12, 'Dr. Benjamin Carter', 'benjamin.carter@liverpool.ac.uk', NULL, NULL, NULL, NULL),
 (13, 'Dr. Chloe Thompson', 'chloe.thompson@liverpool.ac.uk', NULL, NULL, NULL, NULL),
 (14, 'Dr. Daniel Robinson', 'daniel.robinson@liverpool.ac.uk', NULL, NULL, NULL, NULL),
@@ -356,7 +357,10 @@ INSERT INTO `students` (`StudentID`, `FullName`, `Email`, `Phone`, `Password`, `
 (1, 'Rishi Gautam', 'rishi@muni.com', '123456789', '$2y$10$Xi0wh0/Lnxd3GNzZIwDKsuhtuYFyQTnP860JKshFVsZD.6J9ghB7i', '2026-03-23 18:15:48', '2026-03-23 18:16:37'),
 (2, 'Shreeman Ji', 'shree@ji.com', '', '$2y$10$LINFgcjuHOYX2sdjVy6jUeTGO9j8k9WFMHNLMqzt37UH/J0ASkDiK', '2026-03-23 18:17:26', '2026-03-23 18:17:26'),
 (3, 'There I AM', 'shree@gmail.dk', '', '$2y$10$1PbF9kdu9gQV5gCudXG/o.cAysed5e7JY3dzkBHLn.KAMuR3Jh/X2', '2026-03-23 18:59:50', '2026-03-23 18:59:50'),
-(4, 'Sishir', 'sys@g.co', '', '$2y$10$B4B.Fu/iQl7e98nyAdP17eZuqc18vupIaHpew2tINuzBIimo44kPu', '2026-03-24 08:29:58', '2026-03-24 08:29:58');
+(4, 'Sishir', 'sys@g.co', '', '$2y$10$B4B.Fu/iQl7e98nyAdP17eZuqc18vupIaHpew2tINuzBIimo44kPu', '2026-03-24 08:29:58', '2026-03-24 08:29:58'),
+(5, 'Rishi', 'rishi@gmail.com', '', '$2y$10$hnM/JVSExMepiMbFxDl9/.ctBzkOLPjhuFDyqZCU8tKMjhPnIqLOy', '2026-03-25 13:40:31', '2026-03-25 13:40:31'),
+(6, 'Shreeman Bhandari', 'shree@gmail.com', '', '$2y$10$w7uDcTsTH8jlo.L7zqonBeKtUi3W5ALHLTxX2xRRkWoJcDTD.f6T6', '2026-03-26 12:54:07', '2026-03-26 12:54:07'),
+(7, 'Student', 'student@liverpool.ac.uk', '', '$2y$10$3NSiCCCKKUN1CubnDn6wS.1p0jVmu9bf.m74Su7rZHC8wzpu19wm6', '2026-03-27 07:49:23', '2026-03-27 07:49:23');
 
 --
 -- Indexes for dumped tables
@@ -443,13 +447,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `contact_messages`
 --
 ALTER TABLE `contact_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `interestedstudents`
 --
 ALTER TABLE `interestedstudents`
-  MODIFY `InterestID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `InterestID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `modules`
@@ -461,13 +465,13 @@ ALTER TABLE `modules`
 -- AUTO_INCREMENT for table `ProgrammeModules`
 --
 ALTER TABLE `ProgrammeModules`
-  MODIFY `ProgrammeModuleID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+  MODIFY `ProgrammeModuleID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT for table `programmes`
 --
 ALTER TABLE `programmes`
-  MODIFY `ProgrammeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ProgrammeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `staff`
@@ -479,7 +483,7 @@ ALTER TABLE `staff`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `StudentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `StudentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables

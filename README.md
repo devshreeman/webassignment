@@ -138,12 +138,16 @@ After running the database setup:
 - Staff need passwords set through admin panel or database
 - Email format: `firstname.lastname@liverpool.ac.uk`
 - Sample staff data included in `example-data.sql` (20 staff members)
+- **Email**: sophia.miller@liverpool.ac.uk
+- **Password**: pass12345
 
 ### Student Accounts
 - Students self-register at: `students/register.php`
 - Minimum password length: 8 characters
 - Email validation and duplicate checking included
 - Sample interested students included in database
+- **Email**: student@liverpool.ac.uk
+- **Password**: student123
 
 ## Project Structure
 
