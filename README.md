@@ -364,6 +364,12 @@ Three distinct user types with appropriate access levels:
 
 This is a group assignment project for CTEC2712: Web Application Development.
 
+### Members
+- Shreeman Bhandari
+- Bibek Timsina
+- Suraj Rai
+- Rojal Karki
+
 ## Academic Context
 
 **Course**: CTEC2712 - Web Application Development  
