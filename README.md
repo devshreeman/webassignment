@@ -381,9 +381,3 @@ This is a group assignment project for CTEC2712: Web Application Development.
 ## License
 
 This project is an academic assignment and is not affiliated with or endorsed by the University of Liverpool as an institution. It is developed solely for educational purposes.
-
----
-
-**Version**: 1.0  
-**Last Updated**: March 2026  
-**Built with**: Vanilla PHP, MySQL, Vanilla JavaScript, Custom CSS (No Frameworks)
